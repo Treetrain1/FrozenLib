@@ -28,7 +28,6 @@ public class FrozenMain {
     public static final NOPLogger LOGGER4 = NOPLogger.NOP_LOGGER;
 
     public static void init() {
-        FrozenRegistry.init();
         FrozenSoundPredicates.init();
 
         if (Platform.isDevelopmentEnvironment()) {
@@ -36,7 +35,7 @@ public class FrozenMain {
             //StructurePoolElementIdReplacements.resourceLocationReplacements.put(new ResourceLocation("ancient_city/city_center/city_center_1"), id("ancient_city/city_center/city_center_2"));
             //StructurePoolElementIdReplacements.resourceLocationReplacements.put(new ResourceLocation("ancient_city/city_center/city_center_2"), id("ancient_city/city_center/city_center_2"));
             //StructurePoolElementIdReplacements.resourceLocationReplacements.put(new ResourceLocation("ancient_city/city_center/city_center_3"), id("ancient_city/city_center/city_center_2"));
-            //RegisterDev.init();
+            RegisterDev.init();
             BonemealBehaviors.bonemeals.put(Blocks.STONE, (context, level, pos, state, face, horizontal) -> {
                 if (!level.isClientSide) {
                     level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, pos, 0);
@@ -46,6 +45,8 @@ public class FrozenMain {
                 return false;
             });
         }
+
+        FrozenRegistry.init();
 
         receiveSoundSyncPacket();
     }
