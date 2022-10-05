@@ -39,7 +39,7 @@ public class FrozenClient {
     }
 
     private static void receiveMovingRestrictionSoundPacket() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), FrozenMain.MOVING_RESTRICTION_SOUND_PACKET, (buf, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.s2c(), FrozenMain.MOVING_RESTRICTION_SOUND_PACKET, (buf, context) -> {
             int id = buf.readVarInt();
             SoundEvent sound = buf.readById(Registry.SOUND_EVENT);
             SoundSource category = buf.readEnum(SoundSource.class);
@@ -60,7 +60,7 @@ public class FrozenClient {
     }
 
     private static void receiveMovingRestrictionLoopingSoundPacket() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), FrozenMain.MOVING_RESTRICTION_LOOPING_SOUND_PACKET, (buf, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.s2c(), FrozenMain.MOVING_RESTRICTION_LOOPING_SOUND_PACKET, (buf, context) -> {
             int id = buf.readVarInt();
             SoundEvent sound = buf.readById(Registry.SOUND_EVENT);
             SoundSource category = buf.readEnum(SoundSource.class);
@@ -81,7 +81,7 @@ public class FrozenClient {
     }
 
     private static void receiveStartingMovingRestrictionLoopingSoundPacket() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), FrozenMain.STARTING_RESTRICTION_LOOPING_SOUND_PACKET, (buf, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.s2c(), FrozenMain.STARTING_RESTRICTION_LOOPING_SOUND_PACKET, (buf, context) -> {
             int id = buf.readVarInt();
             SoundEvent startingSound = buf.readById(FrozenRegistry.STARTING_SOUND);
             SoundEvent loopingSound = buf.readById(Registry.SOUND_EVENT);
@@ -103,7 +103,7 @@ public class FrozenClient {
     }
 
     private static void receiveFlybySoundPacket() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), FrozenMain.FLYBY_SOUND_PACKET, (buf, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.s2c(), FrozenMain.FLYBY_SOUND_PACKET, (buf, context) -> {
             int id = buf.readVarInt();
             SoundEvent sound = buf.readById(Registry.SOUND_EVENT);
             SoundSource category = buf.readEnum(SoundSource.class);
@@ -123,7 +123,7 @@ public class FrozenClient {
     }
 
     private static void receiveCooldownChangePacket() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), FrozenMain.COOLDOWN_CHANGE_PACKET, (buf, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.s2c(), FrozenMain.COOLDOWN_CHANGE_PACKET, (buf, context) -> {
             Item item = buf.readById(Registry.ITEM);
             int additional = buf.readVarInt();
             context.queue(() -> {

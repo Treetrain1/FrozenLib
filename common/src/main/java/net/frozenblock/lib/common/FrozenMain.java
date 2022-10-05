@@ -75,7 +75,7 @@ public class FrozenMain {
     }
 
     private static void receiveSoundSyncPacket() {
-        NetworkManager.registerReceiver(NetworkManager.s2c(), FrozenMain.REQUEST_LOOPING_SOUND_SYNC_PACKET, (byteBuf, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.c2s(), FrozenMain.REQUEST_LOOPING_SOUND_SYNC_PACKET, (byteBuf, context) -> {
             int id = byteBuf.readVarInt();
             Level dimension = context.getPlayer().getLevel();
             if (!(context.getPlayer() instanceof ServerPlayer serverPlayer)) {
