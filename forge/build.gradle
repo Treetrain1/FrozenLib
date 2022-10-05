@@ -14,8 +14,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "frozenblocklib-common.mixins.json"
-        mixinConfig "frozenblocklib-forge.mixins.json"
+        mixinConfig "mixin/frozenblocklib-common.mixins.json"
+        mixinConfig "mixin/frozenblocklib-forge.mixins.json"
     }
 }
 

@@ -36,14 +36,6 @@ public class FrozenMain {
             //StructurePoolElementIdReplacements.resourceLocationReplacements.put(new ResourceLocation("ancient_city/city_center/city_center_2"), id("ancient_city/city_center/city_center_2"));
             //StructurePoolElementIdReplacements.resourceLocationReplacements.put(new ResourceLocation("ancient_city/city_center/city_center_3"), id("ancient_city/city_center/city_center_2"));
             RegisterDev.init();
-            BonemealBehaviors.bonemeals.put(Blocks.STONE, (context, level, pos, state, face, horizontal) -> {
-                if (!level.isClientSide) {
-                    level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, pos, 0);
-                    level.setBlockAndUpdate(pos, Blocks.DIAMOND_BLOCK.defaultBlockState());
-                    return true;
-                }
-                return false;
-            });
         }
 
         FrozenRegistry.init();
