@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.frozenblock.lib.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+	"server.HopperBlockEntityMixin",
+	"worldgen.biome.MinecraftServerMixin",
+	"worldgen.biome.MultiNoiseBiomeSourceMixin"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

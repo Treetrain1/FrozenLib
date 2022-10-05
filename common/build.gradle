@@ -1,0 +1,142 @@
+architectury {
+    common(rootProject.enabled_platforms.split(","))
+}
+
+loom {
+    mixin {
+        defaultRefmapName = "mixins.frozenblocklib.refmap.json"
+    }
+
+    accessWidenerPath = file("src/main/resources/frozenblocklib.accesswidener")
+}
+
+dependencies {
+    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
+    // Do NOT use other classes from fabric loader
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    // Remove the next line if you don't want to depend on the API
+    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+}
+
+/*configurations {
+    includeModImplementation
+    includeImplementation
+
+    include.extendsFrom includeImplementation
+    include.extendsFrom includeModImplementation
+
+    implementation.extendsFrom includeImplementation
+    modImplementation.extendsFrom includeModImplementation
+}
+
+sourceSets {
+    api {
+        java {
+            compileClasspath += main.compileClasspath
+        }
+    }
+
+    main {
+        java {
+            compileClasspath += api.output
+            runtimeClasspath += api.output
+        }
+    }
+}
+
+javadoc {
+    options.tags = ["reason"]
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+    it.options.release = 17
+    options.fork = true
+    options.incremental = true
+}
+
+tasks.withType(Test).configureEach {
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+String getVersion() {
+    String version = "${mod_version}-${mod_loader}+${minecraft_version}"
+
+    if (findProperty("releaseType") != "stable") {
+        version += "-unstable"
+    }
+
+    return version
+}
+
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    archives remapJar
+    archives sourcesJar
+}*/
+
+def env = System.getenv()
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = rootProject.archives_base_name
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+    }
+}/*
+
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    dev jar
+}
+*/

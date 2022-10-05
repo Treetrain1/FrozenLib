@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "id": "frozenblocklib",
+  "version": "${version}",
+  "name": "FrozenBlock's Library",
+  "description": "It will grow over time.",
+  "authors": [
+	"FrozenBlock"
+  ],
+  "contact": {
+
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/frozenblocklib/icon.png",
+  "environment": "*",
+  "entrypoints": {
+	"main": [
+	  "net.frozenblock.lib.fabric.FrozenMainFabric",
+	  "org.quiltmc.qsl.frozenblock.fabric.misc.datafixerupper.impl.FabricServerFreezer",
+	  "org.quiltmc.qsl.frozenblock.fabric.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"
+	],
+	"client": [
+	  "net.frozenblock.lib.fabric.FrozenClientFabric",
+	  "org.quiltmc.qsl.frozenblock.fabric.misc.datafixerupper.impl.client.FabricClientFreezer"
+	],
+	"preLaunch": [
+	  "net.frozenblock.lib.fabric.FrozenPreLaunchFabric"
+	]
+  },
+  "mixins": [
+	"mixin/frozenblocklib-fabric.mixins.json",
+	"mixin/quiltmc_datafixerupper-fabric.mixins.json",
+	"mixin/quiltmc_surface_rule-fabric.mixins.json",
+	"mixin/quiltmc_resource_loader-fabric.mixins.json"
+  ],
+  "depends": {
+	"fabricloader": ">=0.14.8",
+	"fabric": ">=0.58.0",
+	"minecraft": ">=1.19",
+	"java": ">=17"
+  },
+  "breaks": {
+    "quilted_fabric_api": "4.0.0-beta.8"
+  },
+  "custom": {
+	"modmenu": {
+	  "links": {
+		"modmenu.discord": "https://discord.gg/EpkBWm844s"
+	  },
+	  "badges": [
+		"library"
+	  ]
+	}
+  }
+}

@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[43,)"
+issueTrackerURL = "https://github.com/FrozenBlock/FrozenLib/issues"
+license = "LGPL-3.0"
+
+[[mods]]
+modId = "frozenblocklib"
+version = "${version}"
+displayName = "FrozenBlock's Library"
+authors = "FrozenBlock"
+description = '''
+It will grow over time.
+'''
+#logoFile = ""
+
+[[dependencies.frozenblocklib]]
+modId = "forge"
+mandatory = true
+versionRange = "[43,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.frozenblocklib]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.frozenblocklib]]
+modId = "architectury"
+mandatory = true
+versionRange = "[6.2.46,)"
+ordering = "AFTER"
+side = "BOTH"
