@@ -14,7 +14,7 @@ public class RegisterDev {
     public static final RegistrySupplier<Camera> CAMERA = FrozenRegistry.ITEMS.register(
             id("camera"), () -> new Camera(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     public static final RegistrySupplier<LootTableWhacker> LOOT_TABLE_WHACKER = FrozenRegistry.ITEMS.register(
-            id("camera"), () -> new LootTableWhacker(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            id("loot_table_whacker"), () -> new LootTableWhacker(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public static void init() {
     }
