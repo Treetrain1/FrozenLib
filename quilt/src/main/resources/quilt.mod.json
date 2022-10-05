@@ -20,13 +20,16 @@
     "environment": "*",
     "entrypoints": {
       "init": [
-        "net.examplemod.quilt.ExampleModQuilt"
+        "net.frozenblock.lib.quilt.FrozenMainQuilt"
+      ],
+      "client_init": [
+        "net.frozenblock.lib.quilt.FrozenClientQuilt"
       ]
     },
     "depends": [
       {
         "id": "quilt_loader",
-        "version": "*"
+        "version": ">=0.17.4"
       },
       {
         "id": "quilt_base",
@@ -38,7 +41,7 @@
       },
       {
         "id": "architectury",
-        "version": ">=6.2.43"
+        "version": ">=6.2.46"
       }
     ]
   }
