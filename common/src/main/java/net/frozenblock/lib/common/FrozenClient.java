@@ -16,10 +16,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import org.quiltmc.qsl.frozenblock.common.misc.datafixerupper.impl.client.ClientFreezer;
 
 public class FrozenClient {
 
     public static void init() {
+        ClientFreezer.initialize();
         ClientTickEvent.CLIENT_LEVEL_PRE.register(e -> {
             Minecraft client = Minecraft.getInstance();
             if (client.level != null) {

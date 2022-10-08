@@ -42,7 +42,7 @@ sourceSets {
             runtimeClasspath += api.output
         }
     }
-}
+}*/
 
 javadoc {
     options.tags = ["reason"]
@@ -111,7 +111,7 @@ configurations {
 artifacts {
     archives remapJar
     archives sourcesJar
-}*/
+}
 
 def env = System.getenv()
 

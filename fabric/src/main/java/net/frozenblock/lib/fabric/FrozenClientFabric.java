@@ -3,7 +3,7 @@ package net.frozenblock.lib.fabric;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.frozenblock.lib.common.FrozenClient;
-import net.frozenblock.lib.fabric.entrypoints.FrozenClientEntrypoint;
+import net.frozenblock.lib.common.entrypoints.FrozenClientEntrypoint;
 
 public final class FrozenClientFabric implements ClientModInitializer {
 

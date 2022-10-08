@@ -15,6 +15,9 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         mixinConfig "mixin/frozenblocklib-common.mixins.json"
+        mixinConfig "mixin/quiltmc_datafixerupper_frozenblock-common.mixins.json"
+        mixinConfig "mixin/quiltmc_resource_loader_frozenblock-common.mixins.json"
+        mixinConfig "mixin/quiltmc_surface_rule_frozenblock-common.mixins.json"
         mixinConfig "mixin/frozenblocklib-forge.mixins.json"
     }
 }

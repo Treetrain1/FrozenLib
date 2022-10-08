@@ -2,7 +2,6 @@ package net.frozenblock.lib.common.sound;
 
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
-import net.frozenblock.lib.common.interfaces.EntityLoopingSoundInterface;
 import net.frozenblock.lib.common.network.PlayerLookup;
 import net.frozenblock.lib.common.FrozenMain;
 import net.frozenblock.lib.common.registry.FrozenRegistry;
@@ -48,7 +47,7 @@ public class FrozenSoundPackets {
                     FrozenMain.MOVING_RESTRICTION_LOOPING_SOUND_PACKET, byteBuf
             );
             if (entity instanceof LivingEntity living) {
-                ((EntityLoopingSoundInterface)living).addSound(Registry.SOUND_EVENT.getKey(sound), category, volume, pitch, id);
+                living.addSound(Registry.SOUND_EVENT.getKey(sound), category, volume, pitch, id);
             }
         }
     }
@@ -78,7 +77,7 @@ public class FrozenSoundPackets {
                     FrozenMain.STARTING_RESTRICTION_LOOPING_SOUND_PACKET, byteBuf
             );
             if (entity instanceof LivingEntity living) {
-                ((EntityLoopingSoundInterface)living).addSound(Registry.SOUND_EVENT.getKey(sound), category, volume, pitch, id);
+                living.addSound(Registry.SOUND_EVENT.getKey(sound), category, volume, pitch, id);
             }
         }
     }

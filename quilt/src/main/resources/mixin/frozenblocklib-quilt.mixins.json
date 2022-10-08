@@ -6,8 +6,9 @@
   "client": [
   ],
   "mixins": [
+	"worldgen.biome.MinecraftServerMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+	"defaultRequire": 1
   }
 }

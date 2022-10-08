@@ -1,6 +1,5 @@
 package net.frozenblock.lib.common.sound;
 
-import dev.architectury.registry.registries.RegistrySupplier;
 import net.frozenblock.lib.common.FrozenMain;
 import net.frozenblock.lib.common.registry.FrozenRegistry;
 import net.minecraft.core.Registry;
@@ -16,10 +15,10 @@ public class StartingSounds {
      */
     public static HashMap<ResourceKey<?>, SoundEvent> startingSounds = new HashMap<>();
 
-    public static final RegistrySupplier<SoundEvent> EMPTY_SOUND = register("empty_sound");
+    public static final SoundEvent EMPTY_SOUND = register("empty_sound");
 
-    public static RegistrySupplier<SoundEvent> register(String key) {
-        return FrozenRegistry.DEFERRED_STARTING_SOUND.register(key, () -> new SoundEvent(FrozenMain.id(key)));
+    public static SoundEvent register(String key) {
+        return FrozenRegistry.DEFERRED_STARTING_SOUND.register(FrozenMain.id(key), () -> new SoundEvent(FrozenMain.id(key))).getOrNull();
     }
 
 }

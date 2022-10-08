@@ -1,6 +1,6 @@
 package net.frozenblock.lib.fabric.mixin.worldgen.biome;
 
-import net.frozenblock.lib.fabric.worldgen.biome.impl.OverworldBiomeData;
+import net.frozenblock.lib.common.worldgen.biome.impl.OverworldBiomeData;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;

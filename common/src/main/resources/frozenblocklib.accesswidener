@@ -75,8 +75,8 @@ transitive-accessible    field    net/minecraft/world/level/biome/MultiNoiseBiom
 transitive-mutable    field    net/minecraft/world/level/biome/MultiNoiseBiomeSource    parameters    Lnet/minecraft/world/level/biome/Climate$ParameterList;
 
 # Rebuilding biome source feature lists
-transitive-accessible    field    net/minecraft/world/level/biome/BiomeSource    possibleBiomes    Ljava/util/Set;
-transitive-mutable    field    net/minecraft/world/level/biome/BiomeSource    possibleBiomes    Ljava/util/Set;
+transitive-accessible    field    net/minecraft/world/level/biome/BiomeSource    lazyPossibleBiomes    Ljava/util/Set;
+transitive-mutable    field    net/minecraft/world/level/biome/BiomeSource    lazyPossibleBiomes    Ljava/util/Set;
 
 # Surface Rules
 transitive-accessible    method    net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource    <init>    (Ljava/util/List;)V

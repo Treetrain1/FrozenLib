@@ -1,3 +1,17 @@
 {
-  "accessWidener": "frozenblocklib.accesswidener"
+  "accessWidener": "frozenblocklib.accesswidener",
+  "injected_interfaces": {
+    "net/minecraft/class_1796": [
+      "net/frozenblock/lib/common/interfaces/CooldownInterface"
+    ],
+    "net/minecraft/class_1817": [
+      "net/frozenblock/lib/common/interfaces/CooldownInterface"
+    ],
+    "net/minecraft/class_1309": [
+      "net/frozenblock/lib/common/interfaces/EntityLoopingSoundInterface"
+    ],
+    "net/minecraft/class_4766": [
+      "net/frozenblock/lib/common/worldgen/biome/api/FrozenBiomeSourceAccess"
+    ]
+  }
 }

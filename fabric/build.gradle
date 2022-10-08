@@ -9,6 +9,10 @@ architectury {
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    mixin {
+        useLegacyMixinAp = true
+    }
 }
 
 configurations {

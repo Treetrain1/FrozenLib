@@ -13,12 +13,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.material.Fluid;
+import org.quiltmc.qsl.frozenblock.common.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer;
 
 public class FrozenRegistry {
 
     public static final ResourceKey<Registry<SoundEvent>> STARTING_SOUND_REGISTRY = createRegistryKey(FrozenMain.id("starting_sound"));
 
-    public static final Registry<SoundEvent> STARTING_SOUND = Registry.registerSimple(STARTING_SOUND_REGISTRY, registry -> StartingSounds.EMPTY_SOUND.get());
+    public static final Registry<SoundEvent> STARTING_SOUND = Registry.registerSimple(STARTING_SOUND_REGISTRY, registry -> StartingSounds.EMPTY_SOUND);
 
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(FrozenMain.MOD_ID, Registry.BLOCK_REGISTRY);

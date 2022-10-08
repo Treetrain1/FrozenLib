@@ -1,10 +1,9 @@
 package net.frozenblock.lib.fabric.events;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
+import net.frozenblock.lib.common.events.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +14,28 @@ public class FrozenEvents {
     private static final List<Event<?>> REGISTERED_EVENTS = new ArrayList<>();
 
     public static <T> Event<T> createEnvironmentEvent(Class<? super T> type, Function<T[], T> invokerFactory) {
-        var event = EventFactory.createArrayBacked(type, invokerFactory);
+        Event<T> event = EventFactory.createLoop();
 
-        register(event, type);
+        //register(event, type);
 
         return event;
     }
 
-    public static <T> Event<T> createEnvironmentEvent(Class<T> type, T emptyInvoker, Function<T[], T> invokerFactory) {
+    public static <T> Event<T> createEnvironmentEvent(Event<T> event) {
+        var type = event.getClass().getComponentType();
+
+        //register(event, (Class<? super T>) type);
+
+        return event;
+    }
+
+    /*public static <T> Event<T> createEnvironmentEvent(Class<T> type, T emptyInvoker, Function<T[], T> invokerFactory) {
         var event = EventFactory.createArrayBacked(type, emptyInvoker, invokerFactory);
 
-        register(event, type);
+        //register(event, type);
 
         return event;
-    }
+    }*/
 
     public static <T> void register(Event<T> event, Class<? super T> type) {
         if (!REGISTERED_EVENTS.contains(event)) {
@@ -38,11 +45,11 @@ public class FrozenEvents {
                     List<?> entrypoints = FabricLoader.getInstance().getEntrypoints(eventType.entrypoint(), eventType.listener());
 
                     for (Object entrypoint : entrypoints) {
-                        var map = new Object2ObjectOpenHashMap<Class<?>, ResourceLocation>();
+                        //var map = new Object2ObjectOpenHashMap<Class<?>, ResourceLocation>();
 
                         if (type.isAssignableFrom(entrypoint.getClass())) {
-                            var phase = map.getOrDefault(type, Event.DEFAULT_PHASE);
-                            event.register(phase, (T) entrypoint);
+                            //var phase = map.getOrDefault(type, Event.DEFAULT_PHASE);
+                            event.register(/*phase, */(T) entrypoint);
                         }
                     }
 

@@ -1,21 +1,28 @@
 {
   "schema_version": 1,
   "mixin": [
-    "frozenblocklib-quilt.mixins.json",
-    "frozenblocklib-common.mixins.json"
+    "mixin/frozenblocklib-common.mixins.json",
+    "mixin/frozenblocklib-quilt.mixins.json",
+    "mixin/quiltmc_datafixerupper_frozenblock-common.mixins.json",
+    "mixin/quiltmc_resource_loader_frozenblock-common.mixins.json",
+    "mixin/quiltmc_surface_rule_frozenblock-common.mixins.json"
   ],
   "quilt_loader": {
     "group": "${group}",
-    "id": "examplemod",
+    "id": "frozenblocklib",
     "version": "${version}",
-    "name": "Example Mod",
-    "description": "This is an example description! Tell everyone what your mod is about!",
-    "authors": ["Me!"],
+    "name": "FrozenBlock's Library",
+    "description": "It will grow over time.",
+    "authors": [
+      "FrozenBlock"
+    ],
     "contact": {
-      "sources": "https://github.com/architectury/architectury-templates"
+      "homepage": "https://modrinth.com/mod/frozenlib",
+      "sources": "https://github.com/FrozenBlock/FrozenLib",
+      "issues": "https://github.com/FrozenBlock/FrozenLib/issues"
     },
-    "license": "Insert License Here",
-    "icon": "assets/examplemod/icon.png",
+    "license": "LGPL-3.0",
+    "icon": "assets/frozenblocklib/icon.png",
     "intermediate_mappings": "net.fabricmc:intermediary",
     "environment": "*",
     "entrypoints": {

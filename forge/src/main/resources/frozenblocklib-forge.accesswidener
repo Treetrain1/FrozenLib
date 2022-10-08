@@ -1,0 +1,4 @@
+accessWidener    v2    named
+
+transitive-accessible    field    net/minecraft/world/level/biome/BiomeSource    lazyPossibleBiomes    Ljava/util/Set;
+transitive-mutable    field    net/minecraft/world/level/biome/BiomeSource    lazyPossibleBiomes    Ljava/util/Set;

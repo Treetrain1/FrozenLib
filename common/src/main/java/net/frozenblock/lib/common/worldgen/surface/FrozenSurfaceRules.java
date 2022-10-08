@@ -31,6 +31,7 @@ public final class FrozenSurfaceRules {
     public static final SurfaceRules.RuleSource MUD = makeStateRule(Blocks.MUD);
     public static final SurfaceRules.RuleSource POWDER_SNOW = makeStateRule(Blocks.POWDER_SNOW);
     public static final SurfaceRules.RuleSource ICE = makeStateRule(Blocks.ICE);
+    public static final SurfaceRules.RuleSource SPONGE = makeStateRule(Blocks.SPONGE);
     public static final SurfaceRules.RuleSource WATER = makeStateRule(Blocks.WATER);
     public static final SurfaceRules.RuleSource LAVA = makeStateRule(Blocks.LAVA);
     public static final SurfaceRules.RuleSource NETHERRACK = makeStateRule(Blocks.NETHERRACK);

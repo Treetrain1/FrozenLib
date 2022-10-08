@@ -8,30 +8,33 @@
 	"FrozenBlock"
   ],
   "contact": {
-
+	"homepage": "https://modrinth.com/mod/frozenlib",
+	"sources": "https://github.com/FrozenBlock/FrozenLib",
+	"issues": "https://github.com/FrozenBlock/FrozenLib/issues"
   },
   "license": "LGPL-3.0",
   "icon": "assets/frozenblocklib/icon.png",
   "environment": "*",
   "entrypoints": {
 	"main": [
-	  "net.frozenblock.lib.fabric.FrozenMainFabric",
-	  "org.quiltmc.qsl.frozenblock.fabric.misc.datafixerupper.impl.FabricServerFreezer",
-	  "org.quiltmc.qsl.frozenblock.fabric.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer"
+	  "net.frozenblock.lib.fabric.FrozenMainFabric"
 	],
 	"client": [
-	  "net.frozenblock.lib.fabric.FrozenClientFabric",
-	  "org.quiltmc.qsl.frozenblock.fabric.misc.datafixerupper.impl.client.FabricClientFreezer"
+	  "net.frozenblock.lib.fabric.FrozenClientFabric"
+	],
+	"frozenlib:events": [
+	  "net.frozenblock.lib.fabric.FrozenMainFabric"
 	],
 	"preLaunch": [
 	  "net.frozenblock.lib.fabric.FrozenPreLaunchFabric"
 	]
   },
   "mixins": [
+	"mixin/frozenblocklib-common.mixins.json",
 	"mixin/frozenblocklib-fabric.mixins.json",
-	"mixin/quiltmc_datafixerupper-fabric.mixins.json",
-	"mixin/quiltmc_surface_rule-fabric.mixins.json",
-	"mixin/quiltmc_resource_loader-fabric.mixins.json"
+	"mixin/quiltmc_datafixerupper_frozenblock-common.mixins.json",
+	"mixin/quiltmc_resource_loader_frozenblock-common.mixins.json",
+	"mixin/quiltmc_surface_rule_frozenblock-common.mixins.json"
   ],
   "depends": {
 	"fabricloader": ">=0.14.8",

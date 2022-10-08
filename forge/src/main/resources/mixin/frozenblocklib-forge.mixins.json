@@ -6,6 +6,9 @@
   "client": [
   ],
   "mixins": [
+    "server.BiomeSourceMixin",
+    "server.HopperBlockEntityMixin",
+    "server.MinecraftServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
