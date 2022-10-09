@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
 import net.frozenblock.lib.common.FrozenMain;
 import net.frozenblock.lib.common.worldgen.biome.api.FrozenBiomeSourceAccess;
+import net.frozenblock.lib.common.worldgen.biome.api.FrozenMultiNoiseBiomeSourceAccess;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
@@ -83,12 +84,12 @@ public final class OverworldBiomeData {
 
     public static void modifyBiomeSource(Registry<Biome> biomeRegistry, BiomeSource biomeSource) {
         if (biomeSource instanceof MultiNoiseBiomeSource multiNoiseBiomeSource) {
-            if (((FrozenBiomeSourceAccess) multiNoiseBiomeSource).frozenLib_shouldModifyBiomeEntries() && multiNoiseBiomeSource.stable(MultiNoiseBiomeSource.Preset.OVERWORLD)) {
+            if (((FrozenMultiNoiseBiomeSourceAccess) multiNoiseBiomeSource).frozenLib_shouldModifyBiomeEntries() && multiNoiseBiomeSource.stable(MultiNoiseBiomeSource.Preset.OVERWORLD)) {
                 multiNoiseBiomeSource.parameters = OverworldBiomeData.withModdedBiomeEntries(
                         MultiNoiseBiomeSource.Preset.OVERWORLD.parameterSource.apply(biomeRegistry),
                         biomeRegistry);
-                multiNoiseBiomeSource.lazyPossibleBiomes = multiNoiseBiomeSource.parameters.values().stream().map(Pair::getSecond).collect(Collectors.toSet());
-                ((FrozenBiomeSourceAccess) multiNoiseBiomeSource).frozenLib_setModifyBiomeEntries(false);
+                ((FrozenBiomeSourceAccess) multiNoiseBiomeSource).frozenLib_setPossibleBiomes(multiNoiseBiomeSource.parameters.values().stream().map(Pair::getSecond).collect(Collectors.toSet()));
+                ((FrozenMultiNoiseBiomeSourceAccess) multiNoiseBiomeSource).frozenLib_setModifyBiomeEntries(false);
             }
         }
     }

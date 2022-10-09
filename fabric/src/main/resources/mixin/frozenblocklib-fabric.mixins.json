@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
 	"server.HopperBlockEntityMixin",
+	"worldgen.biome.BiomeSourceMixin",
 	"worldgen.biome.MinecraftServerMixin"
   ],
   "injectors": {

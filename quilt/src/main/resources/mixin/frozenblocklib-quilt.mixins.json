@@ -6,6 +6,7 @@
   "client": [
   ],
   "mixins": [
+	"worldgen.biome.BiomeSourceMixin",
 	"worldgen.biome.MinecraftServerMixin"
   ],
   "injectors": {
