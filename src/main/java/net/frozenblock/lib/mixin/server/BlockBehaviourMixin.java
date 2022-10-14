@@ -16,14 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockBehaviour.class)
 public class BlockBehaviourMixin {
 
-    @Inject(method = "tick", at = @At("HEAD"))
+    /*@Inject(method = "tick", at = @At("HEAD"))
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo info) {
         ScheduledBlockEvents.ON_SCHEDULED_TICK.invoker().onScheduledTick(state, level, pos, random);
-    }
+    }*/
 
     @Mixin(BlockBehaviour.BlockStateBase.class)
     private static class BlockStateBaseMixin {
-        // i was testing doing this with BlockStateBase
         @Shadow
         protected BlockState asState() {
             throw new AssertionError("Mixin injection failed.");
@@ -35,11 +34,17 @@ public class BlockBehaviourMixin {
             ScheduledBlockEvents.ON_BLOCK_PLACE.invoker().onBlockPlace(state, level, pos, oldState, isMoving);
         }
 
-        /*@Inject(method = "tick", at = @At("TAIL"))
-        private void frozenLib_scheduledTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        @Inject(method = "tick", at = @At("TAIL"))
+        private void frozenLib_tick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
             var state = this.asState();
             ScheduledBlockEvents.ON_SCHEDULED_TICK.invoker().onScheduledTick(state, level, pos, random);
-        }*/
+        }
+
+        @Inject(method = "randomTick", at = @At("TAIL"))
+        private void frozenLib_randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+            var state = this.asState();
+            ScheduledBlockEvents.ON_SCHEDULED_TICK.invoker().onScheduledTick(state, level, pos, random);
+        }
     }
 
 }
