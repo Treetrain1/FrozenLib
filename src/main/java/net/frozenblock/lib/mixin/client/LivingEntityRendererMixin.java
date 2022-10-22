@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityModel<T>> {
 
-    @Shadow protected M model;
+    @Shadow
+	protected M model;
 
     @Inject(method = "getRenderType", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/EntityModel;renderType(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"), cancellable = true)
     private void getEasterEgg(T livingEntity, boolean bodyVisible, boolean translucent, boolean glowing, CallbackInfoReturnable<RenderType> cir) {
@@ -22,7 +23,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
             if (easterEgg.getType() == livingEntity.getType()) {
                 var texture = easterEgg.getTexture();
                 if (texture != null) {
-                    if (easterEgg.getCondition().condition(livingEntity, LivingEntityRenderer.class.cast(this), this.model)) {
+                    if (easterEgg.getCondition().condition(livingEntity)) {
                         cir.setReturnValue(this.model.renderType(texture));
                     }
                 }
@@ -36,7 +37,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
             if (easterEgg.getType() == livingEntity.getType()) {
                 var texture = easterEgg.getTexture();
                 if (texture != null) {
-                    if (easterEgg.getCondition().condition(livingEntity, LivingEntityRenderer.class.cast(this), this.model)) {
+                    if (easterEgg.getCondition().condition(livingEntity)) {
                         cir.setReturnValue(RenderType.itemEntityTranslucentCull(texture));
                     }
                 }
@@ -51,7 +52,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
                 if (easterEgg.getType() == livingEntity.getType()) {
                     var texture = easterEgg.getTexture();
                     if (texture != null) {
-                        if (easterEgg.getCondition().condition(livingEntity, LivingEntityRenderer.class.cast(this), this.model)) {
+                        if (easterEgg.getCondition().condition(livingEntity)) {
                             cir.setReturnValue(RenderType.outline(texture));
                         }
                     }

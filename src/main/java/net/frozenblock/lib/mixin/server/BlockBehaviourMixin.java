@@ -29,19 +29,19 @@ public class BlockBehaviourMixin {
         }
 
         @Inject(method = "onPlace", at = @At("TAIL"))
-        private void frozenLib_onPlace(Level level, BlockPos pos, BlockState oldState, boolean isMoving, CallbackInfo ci) {
+        private void onPlace(Level level, BlockPos pos, BlockState oldState, boolean isMoving, CallbackInfo ci) {
             var state = this.asState();
             ScheduledBlockEvents.ON_BLOCK_PLACE.invoker().onBlockPlace(state, level, pos, oldState, isMoving);
         }
 
         @Inject(method = "tick", at = @At("TAIL"))
-        private void frozenLib_tick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        private void scheduledTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
             var state = this.asState();
             ScheduledBlockEvents.ON_SCHEDULED_TICK.invoker().onScheduledTick(state, level, pos, random);
         }
 
         @Inject(method = "randomTick", at = @At("TAIL"))
-        private void frozenLib_randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        private void scheduledRandomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
             var state = this.asState();
             ScheduledBlockEvents.ON_SCHEDULED_TICK.invoker().onScheduledTick(state, level, pos, random);
         }
