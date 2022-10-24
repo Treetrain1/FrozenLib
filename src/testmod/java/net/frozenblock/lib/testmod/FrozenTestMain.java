@@ -2,6 +2,7 @@ package net.frozenblock.lib.testmod;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import static net.frozenblock.lib.FrozenMain.id;
 import net.frozenblock.lib.item.Camera;
 import net.frozenblock.lib.item.LootTableWhacker;
 import net.frozenblock.lib.replacements_and_lists.BlockScheduledTicks;
@@ -9,8 +10,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static net.frozenblock.lib.FrozenMain.id;
 
 public final class FrozenTestMain implements ModInitializer {
 

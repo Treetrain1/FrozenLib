@@ -9,13 +9,12 @@ import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.frozenblock.lib.config.FrozenConfig;
 import net.frozenblock.lib.testmod.FrozenTestMain;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 @Config(name = FrozenTestMain.MOD_ID)
 class TestConfig extends PartitioningSerializer.GlobalData implements ConfigData {
@@ -45,7 +44,7 @@ class TestConfig extends PartitioningSerializer.GlobalData implements ConfigData
         return Component.translatable("tooltip." + FrozenTestMain.MOD_ID + "." + key);
     }
 
-    @Environment(EnvType.CLIENT)
+    @ClientOnly
     static Screen buildScreen(Screen parent) {
         var configBuilder = ConfigBuilder.create().setParentScreen(parent).setTitle(text("component.title"));
         configBuilder.setSavingRunnable(() -> AutoConfig.getConfigHolder(TestConfig.class).save());
@@ -55,7 +54,7 @@ class TestConfig extends PartitioningSerializer.GlobalData implements ConfigData
         return configBuilder.build();
     }
 
-    @Environment(EnvType.CLIENT)
+    @ClientOnly
     static void setupEntries(ConfigCategory category, ConfigEntryBuilder entryBuilder) {
         var config = TestConfig.get();
         var subMenu = config.subMenu;

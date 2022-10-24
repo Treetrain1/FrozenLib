@@ -2,8 +2,6 @@ package net.frozenblock.lib.sound;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
 import net.minecraft.sounds.SoundEvent;
@@ -13,8 +11,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public class FlyBySoundHub {
 
     public static Map<EntityType<?>, FlyBySound> autoEntitiesAndSounds = new HashMap<>();

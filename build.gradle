@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-	id 'fabric-loom' version '+'
+	id 'org.quiltmc.loom' version '1.0.+'
 	id 'io.github.juuxel.loom-quiltflower' version '+'
 	id 'org.ajoberstar.grgit' version '+'
 	id 'com.modrinth.minotaur' version '+'
@@ -143,9 +143,10 @@ dependencies {
             setNameSyntheticMembers(false)
         }
     })
-    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation "org.quiltmc:quilt-loader:${loader_version}"
+
+	// Quilted Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}"
 
     // Fabric-ASM
     modImplementation "com.github.Chocohead:Fabric-ASM:${fabric_asm_version}"
@@ -192,7 +193,7 @@ dependencies {
 processResources {
     inputs.property "version", project.version
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("quilt.mod.json") {
         expand "version": project.version
     }
 }

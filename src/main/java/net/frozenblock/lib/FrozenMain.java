@@ -1,24 +1,23 @@
 package net.frozenblock.lib;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
 import net.frozenblock.lib.entrypoints.FrozenMainEntrypoint;
 import net.frozenblock.lib.interfaces.EntityLoopingFadingDistanceSoundInterface;
 import net.frozenblock.lib.interfaces.EntityLoopingSoundInterface;
 import net.frozenblock.lib.registry.FrozenRegistry;
 import net.frozenblock.lib.sound.FrozenSoundPackets;
-import net.frozenblock.lib.sound.SoundPredicate.SoundPredicate;
 import net.frozenblock.lib.sound.MovingLoopingFadingDistanceSoundEntityManager;
 import net.frozenblock.lib.sound.MovingLoopingSoundEntityManager;
+import net.frozenblock.lib.sound.SoundPredicate.SoundPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import org.quiltmc.qsl.frozenblock.misc.datafixerupper.impl.ServerFreezer;
-import org.quiltmc.qsl.frozenblock.worldgen.surface_rule.impl.QuiltSurfaceRuleInitializer;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLogger;
@@ -34,22 +33,20 @@ public final class FrozenMain implements ModInitializer {
      * <p>
      * It's smart to use this for at least registries.
      */
-    public static boolean UNSTABLE_LOGGING = FabricLoader.getInstance().isDevelopmentEnvironment();
+    public static boolean UNSTABLE_LOGGING = QuiltLoader.isDevelopmentEnvironment();
 
     @Override
-    public void onInitialize() {
+    public void onInitialize(ModContainer mod) {
         FrozenRegistry.initRegistry();
-        ServerFreezer.onInitialize();
-        QuiltSurfaceRuleInitializer.onInitialize();
         SoundPredicate.init();
 
         receiveSoundSyncPacket();
 
-        FabricLoader.getInstance().getEntrypointContainers("frozenlib:main", FrozenMainEntrypoint.class).forEach(entrypoint -> {
+        QuiltLoader.getEntrypointContainers("frozenlib:main", FrozenMainEntrypoint.class).forEach(entrypoint -> {
             try {
                 FrozenMainEntrypoint mainPoint = entrypoint.getEntrypoint();
                 mainPoint.init();
-                if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+                if (QuiltLoader.isDevelopmentEnvironment()) {
                     mainPoint.initDevOnly();
                 }
             } catch (Throwable ignored) {

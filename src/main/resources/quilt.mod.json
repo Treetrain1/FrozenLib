@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "net.frozenblock",
+    "id": "frozenblocklib",
+    "version": "${version}",
+    "metadata": {
+      "name": "FrozenBlock's Library",
+      "description": "It will grow over time.",
+      "contributors": {
+        "FrozenBlock": "Owner"
+      },
+      "contact": {
+      },
+      "icon": "assets/frozenblocklib/icon.png",
+      "license": "LGPL-3.0"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "environment": "*",
+    "load_type": "always",
+    "entrypoints": {
+      "init": "net.frozenblock.lib.FrozenMain",
+      "client_init": "net.frozenblock.lib.FrozenClient"
+    },
+    "access_widener": "frozenblocklib.accesswidener",
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "versions": ">=0.17.0-"
+      },
+      {
+        "id": "quilted_fabric_api",
+        "versions": ">=4.0.0-"
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=1.19.2"
+      },
+      {
+        "id": "java",
+        "versions": ">=17"
+      }
+    ],
+    "breaks": [
+      {
+        "id": "quilted_fabric_api",
+        "reason": "Conflicting APIs",
+        "versions": [
+          "4.0.0-beta.8-"
+        ]
+      }
+    ],
+    "custom": {
+      "modmenu": {
+        "links": {
+          "modmenu.discord": "https://discord.gg/EpkBWm844s"
+        },
+        "badges": [
+          "library"
+        ]
+      }
+    }
+  },
+  "mixin": [
+    "mixin/frozenblocklib.mixins.json"
+  ]
+}

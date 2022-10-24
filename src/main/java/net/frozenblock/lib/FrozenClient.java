@@ -1,16 +1,13 @@
 package net.frozenblock.lib;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.frozenblock.lib.entrypoints.FrozenClientEntrypoint;
 import net.frozenblock.lib.interfaces.CooldownInterface;
 import net.frozenblock.lib.registry.FrozenRegistry;
 import net.frozenblock.lib.sound.FlyBySoundHub;
-import net.frozenblock.lib.sound.SoundPredicate.SoundPredicate;
 import net.frozenblock.lib.sound.MovingSoundLoopWithRestriction;
 import net.frozenblock.lib.sound.MovingSoundWithRestriction;
+import net.frozenblock.lib.sound.SoundPredicate.SoundPredicate;
 import net.frozenblock.lib.sound.StartingSoundInstance;
 import net.frozenblock.lib.sound.distance_based.FadingDistanceSwitchingSound;
 import net.frozenblock.lib.sound.distance_based.MovingFadingDistanceSwitchingSoundLoop;
@@ -22,16 +19,17 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
-import org.quiltmc.qsl.frozenblock.misc.datafixerupper.impl.client.ClientFreezer;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientWorldTickEvents;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
 public final class FrozenClient implements ClientModInitializer {
 
     @Override
-    public void onInitializeClient() {
-        ClientFreezer.onInitializeClient();
-        ClientTickEvents.START_WORLD_TICK.register(level -> {
-            Minecraft client = Minecraft.getInstance();
-            if (client.level != null) {
+    public void onInitializeClient(ModContainer mod) {
+        ClientWorldTickEvents.START.register((client, level) -> {
+            if (level != null) {
                 FlyBySoundHub.update(client, client.player, true);
             }
         });

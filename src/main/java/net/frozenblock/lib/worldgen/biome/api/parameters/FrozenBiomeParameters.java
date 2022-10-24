@@ -1,7 +1,7 @@
 package net.frozenblock.lib.worldgen.biome.api.parameters;
 
-import net.minecraft.world.level.biome.Climate;
 import java.util.List;
+import net.minecraft.world.level.biome.Climate;
 
 public final class FrozenBiomeParameters {
 	private FrozenBiomeParameters() {
