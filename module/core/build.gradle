@@ -1,0 +1,6 @@
+archivesBaseName = "FrozenLib-Core"
+version = rootProject.version
+
+loom {
+	accessWidenerPath = file("src/main/resources/frozenblocklib.accesswidener")
+}

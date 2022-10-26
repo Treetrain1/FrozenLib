@@ -1,0 +1,6 @@
+archivesBaseName = "FrozenLib-DataFixerUpper"
+version = rootProject.version
+
+moduleDependencies(project, [
+        'core'
+])

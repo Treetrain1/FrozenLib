@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "frozenlib-datafixerupper",
+  "version": "${version}",
+  "name": "FrozenLib DataFixerUpper API",
+  "description": "Provides APIs for adding custom DataFixers. Ported to Fabric from QuiltMC's DataFixerUpper API.",
+  "authors": [
+    "FrozenBlock"
+  ],
+  "contact": {
+
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/frozenlib-datafixerupper/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.quiltmc.qsl.frozenblock.misc.datafixerupper.impl.ServerFreezer"
+    ],
+    "client": [
+      "org.quiltmc.qsl.frozenblock.misc.datafixerupper.impl.client.ClientFreezer"
+    ]
+  },
+  "mixins": [
+    "mixin/frozenlib-quiltmc-datafixerupper.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.8",
+    "fabric": ">=0.58.0",
+    "minecraft": ">=1.19",
+    "java": ">=17"
+  },
+  "breaks": {
+    "quilted_fabric_api": "4.0.0-beta.8"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/EpkBWm844s"
+      },
+      "badges": [
+        "library"
+      ],
+      "parent": "frozenlib"
+    }
+  }
+}
