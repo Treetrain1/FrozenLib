@@ -1,0 +1,9 @@
+{
+  "lib39:enable_enhanced_lang": true,
+
+  "item.frozenlib_testmod": {
+    "block_phase_whacker": "Block Phase Whacker",
+    "camera": "Camera",
+    "loot_table_whacker": "Loot Table Whacker"
+  }
+}

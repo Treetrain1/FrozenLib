@@ -22,6 +22,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.frozenblock.lib.FrozenMain;
+import net.frozenblock.lib.networking.api.FrozenPackets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -77,13 +78,9 @@ public class WindManager {
 		//SYNC WITH CLIENTS IN CASE OF DESYNC
 		if (tickCount >= 20) {
 			tickCount = 0;
-			FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-			byteBuf.writeLong(time);
-			byteBuf.writeDouble(WindManager.cloudX);
-			byteBuf.writeDouble(WindManager.cloudY);
-			byteBuf.writeDouble(WindManager.cloudZ);
+			var packet = FrozenPackets.smallWindSync();
 			for (ServerPlayer player : PlayerLookup.all(server)) {
-				ServerPlayNetworking.send(player, FrozenMain.SMALL_WIND_SYNC_PACKET, byteBuf);
+				packet.sendTo(player);
 			}
 		}
 	}

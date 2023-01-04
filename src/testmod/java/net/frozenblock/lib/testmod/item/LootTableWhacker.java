@@ -29,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class LootTableWhacker extends Item {
 
@@ -36,6 +37,8 @@ public class LootTableWhacker extends Item {
         super(settings);
     }
 
+	@Override
+	@NotNull
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos blockPos = context.getClickedPos();

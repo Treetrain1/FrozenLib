@@ -21,8 +21,12 @@ package net.frozenblock.lib.damagesource.api;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class FrozenDamageSource extends DamageSource {
+
+	public static final DamageSource BLOCK_PHASE = source("block_phase");
+	public static final DamageSource HEAVY_ITEM = source("heavy_item");
 
     public FrozenDamageSource(String name) {
         super(name);
@@ -32,6 +36,8 @@ public class FrozenDamageSource extends DamageSource {
         return new FrozenDamageSource(name);
     }
 
+	@Override
+	@NotNull
     public Component getLocalizedDeathMessage(LivingEntity entity) {
         LivingEntity livingEntity = entity.getKillCredit();
         String string = "death.attack." + this.msgId;

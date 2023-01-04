@@ -82,7 +82,7 @@ public class ItemEntityMixin {
 		ItemEntity item = ItemEntity.class.cast(this);
 		Entity owner = this.thrower != null ? item.level.getPlayerByUUID(this.thrower) : null;
 		if (entity != owner) {
-			DamageSource damageSource = FrozenDamageSource.source("heavy_item");
+			DamageSource damageSource = FrozenDamageSource.HEAVY_ITEM;
 			if (owner != null) {
 				((LivingEntity) owner).setLastHurtMob(entity);
 			}

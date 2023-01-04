@@ -118,6 +118,12 @@ repositories {
     maven {
         setUrl("https://maven.flashyreese.me/snapshots")
     }
+	maven {
+		setUrl("https://repo.sleeping.town")
+		content {
+			includeGroup("com.unascribed")
+		}
+	}
     maven {
         setUrl("https://maven.parchmentmc.org")
     }
@@ -142,9 +148,16 @@ dependencies {
 			setNameSyntheticMembers(false)
 		}
 	})
+
     modImplementation("net.fabricmc:fabric-loader:${loader_version}")
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+
+	include(modApi("com.unascribed:lib39-core:${lib39_version}"))
+	include(modApi("com.unascribed:lib39-dessicant:${lib39_version}"))
+	include(modApi("com.unascribed:lib39-phantom:${lib39_version}"))
+	include(modApi("com.unascribed:lib39-tunnel:${lib39_version}"))
+	include(modApi("com.unascribed:lib39-aqi:${lib39_version}"))
 
     // Mod Menu
     modImplementation("com.terraformersmc:modmenu:${modmenu_version}")
