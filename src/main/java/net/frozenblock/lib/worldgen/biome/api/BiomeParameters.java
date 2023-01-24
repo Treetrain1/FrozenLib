@@ -16,22 +16,14 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.frozenblock.lib.worldgen.surface.api;
+package net.frozenblock.lib.worldgen.biome.api;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.SurfaceRules;
+import java.util.ArrayList;
+import net.minecraft.world.level.biome.Climate;
 
-/**
- * Holds both a {@link ResourceLocation} and {@link SurfaceRules.RuleSource}.
- * The ResourceLocation denotes the world preset to be modified, and the RuleSource are the rules to be applied to it.
- */
+public class BiomeParameters {
+	public final ArrayList<Climate.ParameterPoint> points = new ArrayList<>();
 
-public class FrozenPresetBoundRuleSource {
-	public final ResourceLocation preset;
-	public final SurfaceRules.RuleSource ruleSource;
-
-	public FrozenPresetBoundRuleSource(ResourceLocation preset, SurfaceRules.RuleSource ruleSource) {
-		this.preset = preset;
-		this.ruleSource = ruleSource;
+	public BiomeParameters() {
 	}
 }

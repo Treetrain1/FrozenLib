@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 FrozenBlock
+ * Copyright 2023 FrozenBlock
  * This file is part of FrozenLib.
  *
  * This program is free software; you can redistribute it and/or
@@ -16,17 +16,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.frozenblock.lib.block.api;
+package net.frozenblock.lib_compat.modmenu.api;
 
-import net.minecraft.world.level.block.state.properties.WoodType;
+import net.frozenblock.lib_compat.modmenu.impl.FrozenModMenuBadge;
+import java.util.ArrayList;
 
-public final class FrozenWoodTypes {
+public abstract class FrozenModMenuEntrypoint {
 
-	public static WoodType newType(String name) {
-		return new WoodType(name);
+	public abstract ArrayList<FrozenModMenuBadge> newBadges();
+
+	public static FrozenModMenuBadge createBadge(String translationKey, int outlineColor, int fillColor, String key) {
+		return new FrozenModMenuBadge(translationKey, outlineColor, fillColor, key);
 	}
 
-	public static WoodType register(WoodType woodType) {
-		return WoodType.register(woodType);
-	}
 }
+

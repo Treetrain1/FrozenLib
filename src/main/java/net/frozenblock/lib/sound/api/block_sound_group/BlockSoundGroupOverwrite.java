@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 FrozenBlock
+ * Copyright 2023 FrozenBlock
  * This file is part of FrozenLib.
  *
  * This program is free software; you can redistribute it and/or
@@ -22,24 +22,5 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.SoundType;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockSoundGroupOverwrite {
-	@NotNull
-	private final ResourceLocation blockId;
-	@NotNull
-	private final SoundType soundOverwrite;
-
-	public BlockSoundGroupOverwrite(@NotNull ResourceLocation blockId, @NotNull SoundType soundOverwrite) {
-		this.blockId = blockId;
-		this.soundOverwrite = soundOverwrite;
-	}
-
-	@NotNull
-	public ResourceLocation getBlockId() {
-		return this.blockId;
-	}
-
-	@NotNull
-	public SoundType getSoundOverwrite() {
-		return this.soundOverwrite;
-	}
+public record BlockSoundGroupOverwrite(@NotNull ResourceLocation blockId, @NotNull SoundType soundOverwrite) {
 }

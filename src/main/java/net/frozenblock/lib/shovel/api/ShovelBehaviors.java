@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 FrozenBlock
+ * Copyright 2023 FrozenBlock
  * This file is part of FrozenLib.
  *
  * This program is free software; you can redistribute it and/or
@@ -16,18 +16,24 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.frozenblock.modmenu.entrypoint;
+package net.frozenblock.lib.shovel.api;
 
-import net.frozenblock.modmenu.impl.FrozenModMenuBadge;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class FrozenModMenuEntrypoint {
+public class ShovelBehaviors {
 
-	public abstract ArrayList<FrozenModMenuBadge> newBadges();
+	public static final Map<Block, ShovelBehavior> SHOVEL_BEHAVIORS = new HashMap<>();
 
-	public static FrozenModMenuBadge createBadge(String translationKey, int outlineColor, int fillColor, String key) {
-		return new FrozenModMenuBadge(translationKey, outlineColor, fillColor, key);
+	@FunctionalInterface
+	public interface ShovelBehavior {
+		boolean shovel(UseOnContext context, Level world, BlockPos pos, BlockState state, Direction face, Direction horizontal);
 	}
 
 }
-

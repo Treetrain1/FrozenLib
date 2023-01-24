@@ -35,14 +35,19 @@
 	],
     "modmenu": [
       "net.frozenblock.lib.config.frozenlib_config.ModMenuIntegration"
+    ],
+    "terrablender": [
+      "net.frozenblock.lib_compat.terrablender.FrozenTerraBlenderCompat"
     ]
   },
   "mixins": [
 	"mixin/frozenlib.mixins.json",
+    "mixin/frozenlib.axe.mixins.json",
     "mixin/frozenlib.menu.mixins.json",
     "mixin/frozenlib.spotting_icons.mixins.json",
     "mixin/frozenlib.sound.mixins.json",
     "mixin/frozenlib.screenshake.mixins.json",
+    "mixin/frozenlib.shovel.mixins.json",
     "mixin/frozenlib.event.mixins.json",
     "mixin/frozenlib.storage.mixins.json",
     "mixin/frozenlib.worldgen.surface.mixins.json",
@@ -55,8 +60,8 @@
   ],
   "accessWidener": "frozenlib.accesswidener",
   "depends": {
-	"fabricloader": ">=0.14.8",
-	"fabric-api": ">=0.66.0",
+	"fabricloader": ">=0.14.12",
+	"fabric-api": ">=0.73.0",
 	"minecraft": ">=1.19.2",
 	"java": ">=17"
   },

@@ -16,27 +16,29 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.frozenblock.lib.worldgen.surface.mixin;
+package net.frozenblock.lib.mixin.server;
 
-import com.mojang.serialization.Lifecycle;
-import net.frozenblock.lib.worldgen.surface.impl.SetNoiseGeneratorPresetInterface;
-import net.minecraft.core.Holder;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(MappedRegistry.class)
-public class MappedRegistryMixin {
+@Mixin(BlockEntityType.class)
+public class BlockEntityTypeMixin {
 
-	@Inject(method = "registerMapping(ILnet/minecraft/resources/ResourceKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;Z)Lnet/minecraft/core/Holder;", at = @At("HEAD"))
-	private <T> void register(int id, ResourceKey<T> key, T value, Lifecycle lifecycle, boolean logDuplicateKeys, CallbackInfoReturnable<Holder<T>> info) {
-		if (value instanceof NoiseGeneratorSettings settings) {
-			SetNoiseGeneratorPresetInterface.class.cast(settings).setPreset(key.location());
+	/**
+	 * This allows custom sign and hanging sign blocks to be added to their block entities
+	 */
+	@Inject(method = "isValid", at = @At("RETURN"), cancellable = true)
+	private void isValid(BlockState state, CallbackInfoReturnable<Boolean> info) {
+		var type = BlockEntityType.class.cast(this);
+
+		if (type == BlockEntityType.SIGN && (state.getBlock() instanceof StandingSignBlock || state.getBlock() instanceof WallSignBlock)) {
+			info.setReturnValue(true);
 		}
 	}
 }
-
