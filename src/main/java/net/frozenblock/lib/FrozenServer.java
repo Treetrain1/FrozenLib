@@ -16,14 +16,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.frozenblock.lib.worldgen.biome.api;
+package net.frozenblock.lib;
 
-import java.util.ArrayList;
-import net.minecraft.world.level.biome.Climate;
+import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.frozenblock.lib.integration.api.ModIntegrations;
 
-public class BiomeParameters {
-	public final ArrayList<Climate.ParameterPoint> points = new ArrayList<>();
+@Environment(EnvType.SERVER)
+public class FrozenServer implements DedicatedServerModInitializer {
 
-	public BiomeParameters() {
-	}
+    @Override
+    public void onInitializeServer() {
+        ModIntegrations.initialize(); // Mod integrations must run after normal mod initialization
+    }
 }

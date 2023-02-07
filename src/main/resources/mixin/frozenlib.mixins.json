@@ -12,9 +12,9 @@
 	"server.CreeperMixin",
 	"server.MappedRegistryMixin",
 	"server.NoExperimentalMixin",
-	"server.PlayerMixin",
 	"server.PointedDripstoneBlockMixin",
 	"server.RegistryMixin",
+    "server.ServerPlayerGameModeMixin",
 	"worldgen.SinglePoolElementMixin",
 	"worldgen.biome.MinecraftServerMixin",
 	"worldgen.biome.MultiNoiseBiomeSourceMixin"
