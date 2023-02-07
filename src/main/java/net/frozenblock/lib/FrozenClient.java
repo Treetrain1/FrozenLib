@@ -66,12 +66,6 @@ public final class FrozenClient implements ClientModInitializer {
 		receiveStartingRestrictedMovingSoundLoopPacket();
 		receiveMovingRestrictionLoopingFadingDistanceSoundPacket();
 		receiveMovingFadingDistanceSoundPacket();
-		receiveCooldownChangePacket();
-		receiveScreenShakePacket();
-		receiveScreenShakeFromEntityPacket();
-		receiveIconPacket();
-		receiveIconRemovePacket();
-		receivePlayerDamagePacket();
 
 		Panoramas.addPanorama(new ResourceLocation("textures/gui/title/background/panorama"));
 
@@ -160,109 +154,6 @@ public final class FrozenClient implements ClientModInitializer {
 						SoundPredicate.LoopPredicate<T> predicate = SoundPredicate.getPredicate(predicateId);
 						ctx.getSoundManager().play(new RestrictedMovingFadingDistanceSwitchingSoundLoop<>(entity, sound, category, volume, pitch, predicate, fadeDist, maxDist, volume, false));
 						ctx.getSoundManager().play(new RestrictedMovingFadingDistanceSwitchingSoundLoop<>(entity, sound2, category, volume, pitch, predicate, fadeDist, maxDist, volume, true));
-					}
-				}
-			});
-		});
-	}
-
-	private static void receiveCooldownChangePacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.COOLDOWN_CHANGE_PACKET, (ctx, handler, byteBuf, responseSender) -> {
-			Item item = byteBuf.readById(Registry.ITEM);
-			int additional = byteBuf.readVarInt();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null && ctx.player != null) {
-					((CooldownInterface) ctx.player.getCooldowns()).changeCooldown(item, additional);
-				}
-			});
-		});
-	}
-
-	private static void receiveScreenShakePacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.SCREEN_SHAKE_PACKET, (ctx, hander, byteBuf, responseSender) -> {
-			float intensity = byteBuf.readFloat();
-			int duration = byteBuf.readInt();
-			int fallOffStart = byteBuf.readInt();
-			double x = byteBuf.readDouble();
-			double y = byteBuf.readDouble();
-			double z = byteBuf.readDouble();
-			float maxDistance = byteBuf.readFloat();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null) {
-					Vec3 pos = new Vec3(x, y, z);
-					ScreenShaker.addShake(intensity, duration, fallOffStart, pos, maxDistance);
-				}
-			});
-		});
-	}
-
-	private static void receiveScreenShakeFromEntityPacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.SCREEN_SHAKE_ENTITY_PACKET, (ctx, hander, byteBuf, responseSender) -> {
-			int id = byteBuf.readVarInt();
-			float intensity = byteBuf.readFloat();
-			int duration = byteBuf.readInt();
-			int fallOffStart = byteBuf.readInt();
-			float maxDistance = byteBuf.readFloat();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null) {
-					Entity entity = level.getEntity(id);
-					if (entity != null) {
-						ScreenShaker.addShake(entity, intensity, duration, fallOffStart, maxDistance);
-					}
-				}
-			});
-		});
-	}
-
-	private static void receiveIconPacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.SPOTTING_ICON_PACKET, (ctx, handler, byteBuf, responseSender) -> {
-			int id = byteBuf.readVarInt();
-			ResourceLocation texture = byteBuf.readResourceLocation();
-			float startFade = byteBuf.readFloat();
-			float endFade = byteBuf.readFloat();
-			ResourceLocation predicate = byteBuf.readResourceLocation();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null) {
-					Entity entity = level.getEntity(id);
-					if (entity instanceof EntitySpottingIconInterface livingEntity) {
-						livingEntity.getSpottingIconManager().setIcon(texture, startFade, endFade, predicate);
-					}
-				}
-			});
-		});
-	}
-
-	private static void receiveIconRemovePacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.SPOTTING_ICON_REMOVE_PACKET, (ctx, handler, byteBuf, responseSender) -> {
-			int id = byteBuf.readVarInt();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null) {
-					Entity entity = level.getEntity(id);
-					if (entity instanceof EntitySpottingIconInterface livingEntity) {
-						livingEntity.getSpottingIconManager().icon = null;
-					}
-				}
-			});
-		});
-	}
-
-	private static void receivePlayerDamagePacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.HURT_SOUND_PACKET, (ctx, handler, byteBuf, responseSender) -> {
-			int id = byteBuf.readVarInt();
-			ResourceLocation damageLocation = byteBuf.readResourceLocation();
-			float volume = byteBuf.readFloat();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null) {
-					Entity entity = level.getEntity(id);
-					if (entity instanceof Player player) {
-						SoundEvent soundEvent = PlayerDamageSourceSounds.getDamageSound(damageLocation);
-						player.playSound(soundEvent, volume, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2F + 1.0F);
 					}
 				}
 			});

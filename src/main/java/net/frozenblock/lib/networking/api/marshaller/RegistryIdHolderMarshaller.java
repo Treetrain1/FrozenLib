@@ -7,7 +7,11 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public abstract class RegistryIdHolderMarshaller<T> implements Marshaller<RegistryIdHolder<T>> {
 
-	public IdMap<T> idMap;
+	public final IdMap<T> idMap;
+
+	public RegistryIdHolderMarshaller(IdMap<T> idMap) {
+		this.idMap = idMap;
+	}
 
 	@Override
 	public RegistryIdHolder<T> unmarshal(FriendlyByteBuf in) {

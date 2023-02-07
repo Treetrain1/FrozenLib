@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.frozenblock.lib.FrozenMain;
 import net.frozenblock.lib.damagesource.api.PlayerDamageSourceSounds;
+import net.frozenblock.lib.networking.api.PlayerDamageS2C;
 import net.frozenblock.lib.sound.api.FrozenClientPacketInbetween;
 import net.frozenblock.lib.sound.api.MovingLoopingFadingDistanceSoundEntityManager;
 import net.frozenblock.lib.sound.api.MovingLoopingSoundEntityManager;
@@ -139,12 +140,9 @@ public abstract class LivingEntityMixin implements EntityLoopingSoundInterface, 
     private void hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, float f, boolean bl, float g, boolean bl2, Entity entity2, byte event) {
         var entity = LivingEntity.class.cast(this);
         if (entity instanceof Player && event == EntityEvent.HURT && PlayerDamageSourceSounds.containsSource(source)) {
-            FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-            byteBuf.writeVarInt(entity.getId());
-            byteBuf.writeResourceLocation(PlayerDamageSourceSounds.getDamageID(source));
-            byteBuf.writeFloat(this.getSoundVolume());
+			var packet = new PlayerDamageS2C(entity.getId(), PlayerDamageSourceSounds.getDamageID(source), this.getSoundVolume());
             for (ServerPlayer player : PlayerLookup.tracking((ServerLevel) entity.level, entity.blockPosition())) {
-                ServerPlayNetworking.send(player, FrozenMain.HURT_SOUND_PACKET, byteBuf);
+                packet.sendTo(player);
             }
         }
     }

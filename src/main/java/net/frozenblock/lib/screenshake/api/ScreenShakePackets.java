@@ -22,6 +22,8 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.frozenblock.lib.FrozenMain;
+import net.frozenblock.lib.networking.api.ScreenShakeEntityS2C;
+import net.frozenblock.lib.networking.api.ScreenShakeS2C;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,16 +45,9 @@ public final class ScreenShakePackets {
 
 	public static void createScreenShakePacket(Level level, float intensity, int duration, int falloffStart, double x, double y, double z, float maxDistance) {
 		if (!level.isClientSide) {
-			FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-			byteBuf.writeFloat(intensity);
-			byteBuf.writeInt(duration);
-			byteBuf.writeInt(falloffStart);
-			byteBuf.writeDouble(x);
-			byteBuf.writeDouble(y);
-			byteBuf.writeDouble(z);
-			byteBuf.writeFloat(maxDistance);
+			var packet = new ScreenShakeS2C(intensity, duration, falloffStart, x, y, z, maxDistance);
 			for (ServerPlayer player : PlayerLookup.world((ServerLevel) level)) {
-				ServerPlayNetworking.send(player, FrozenMain.SCREEN_SHAKE_PACKET, byteBuf);
+				packet.sendTo(player);
 			}
 		}
 	}
@@ -68,14 +63,9 @@ public final class ScreenShakePackets {
 
 	public static void createScreenShakePacketEntity(Entity entity, Level level, float intensity, int duration, int falloffStart, float maxDistance) {
 		if (!level.isClientSide) {
-			FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-			byteBuf.writeVarInt(entity.getId());
-			byteBuf.writeFloat(intensity);
-			byteBuf.writeInt(duration);
-			byteBuf.writeInt(falloffStart);
-			byteBuf.writeFloat(maxDistance);
+			var packet = new ScreenShakeEntityS2C(entity.getId(), intensity, duration, falloffStart, maxDistance);
 			for (ServerPlayer player : PlayerLookup.world((ServerLevel) level)) {
-				ServerPlayNetworking.send(player, FrozenMain.SCREEN_SHAKE_ENTITY_PACKET, byteBuf);
+				packet.sendTo(player);
 			}
 		}
 	}

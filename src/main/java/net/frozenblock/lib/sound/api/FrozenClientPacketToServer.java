@@ -23,6 +23,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.frozenblock.lib.FrozenMain;
+import net.frozenblock.lib.networking.api.SpottingIconSyncC2S;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -38,10 +39,7 @@ public class FrozenClientPacketToServer {
     }
 
 	public static void sendFrozenIconSyncRequest(int id, ResourceKey<Level> level) {
-		FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-		byteBuf.writeVarInt(id);
-		byteBuf.writeResourceKey(level);
-		ClientPlayNetworking.send(FrozenMain.REQUEST_SPOTTING_ICON_SYNC_PACKET, byteBuf);
+		new SpottingIconSyncC2S(id, level).sendToServer();
 	}
 
 }

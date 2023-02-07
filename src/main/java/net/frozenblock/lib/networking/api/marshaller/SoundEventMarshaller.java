@@ -6,6 +6,6 @@ import net.minecraft.sounds.SoundEvent;
 public class SoundEventMarshaller extends RegistryIdHolderMarshaller<SoundEvent> {
 
 	public SoundEventMarshaller() {
-		this.idMap = Registry.SOUND_EVENT;
+		super(Registry.SOUND_EVENT);
 	}
 }

@@ -28,6 +28,8 @@ import java.util.Optional;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.frozenblock.lib.FrozenMain;
+import net.frozenblock.lib.networking.api.SpottingIconRemoveS2C;
+import net.frozenblock.lib.networking.api.SpottingIconS2C;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -66,15 +68,7 @@ public class SpottingIconManager {
 	public void setIcon(ResourceLocation texture, float startFade, float endFade, ResourceLocation restrictionID) {
 		this.icon = new SpottingIcon(texture, startFade, endFade, restrictionID);
 		if (!this.entity.level.isClientSide) {
-			FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-			byteBuf.writeVarInt(this.entity.getId());
-			byteBuf.writeResourceLocation(texture);
-			byteBuf.writeFloat(startFade);
-			byteBuf.writeFloat(endFade);
-			byteBuf.writeResourceLocation(restrictionID);
-			for (ServerPlayer player : PlayerLookup.tracking(this.entity)) {
-				ServerPlayNetworking.send(player, FrozenMain.SPOTTING_ICON_PACKET, byteBuf);
-			}
+			new SpottingIconS2C(this.entity.getId(), texture, startFade, endFade, restrictionID).sendToAllWatching(this.entity);
 		} else {
 			this.clientHasIconResource = ClientSpottingIconMethods.hasTexture(this.icon.getTexture());
 		}
@@ -85,23 +79,19 @@ public class SpottingIconManager {
 		SpottingIconPredicate.getPredicate(this.icon.restrictionID).onRemoved(this.entity);
 		this.icon = null;
 		if (!this.entity.level.isClientSide) {
-			FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-			byteBuf.writeVarInt(this.entity.getId());
-			for (ServerPlayer player : PlayerLookup.tracking(this.entity)) {
-				ServerPlayNetworking.send(player, FrozenMain.SPOTTING_ICON_REMOVE_PACKET, byteBuf);
-			}
+			new SpottingIconRemoveS2C(this.entity.getId()).sendToAllWatching(this.entity);
 		}
 	}
 
 	public void sendIconPacket(ServerPlayer player) {
 		if (this.icon != null) {
-			FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-			byteBuf.writeVarInt(this.entity.getId());
-			byteBuf.writeResourceLocation(this.icon.texture);
-			byteBuf.writeFloat(this.icon.startFadeDist);
-			byteBuf.writeFloat(this.icon.endFadeDist);
-			byteBuf.writeResourceLocation(this.icon.restrictionID);
-			ServerPlayNetworking.send(player, FrozenMain.SPOTTING_ICON_PACKET, byteBuf);
+			new SpottingIconS2C(
+					this.entity.getId(),
+					this.icon.texture,
+					this.icon.startFadeDist,
+					this.icon.endFadeDist,
+					this.icon.restrictionID
+			).sendTo(player);
 		}
 	}
 

@@ -33,13 +33,20 @@ import net.frozenblock.lib.event.api.PlayerJoinEvent;
 import net.frozenblock.lib.feature.FrozenFeatures;
 import net.frozenblock.lib.math.api.EasyNoiseSampler;
 import net.frozenblock.lib.networking.api.BlockPhaseS2C;
+import net.frozenblock.lib.networking.api.CooldownChangeS2C;
 import net.frozenblock.lib.networking.api.FadingDistanceSoundS2C;
 import net.frozenblock.lib.networking.api.FlybySoundS2C;
 import net.frozenblock.lib.networking.api.FrozenPackets;
 import net.frozenblock.lib.networking.api.LocalPlayerSoundS2C;
 import net.frozenblock.lib.networking.api.LocalSoundS2C;
 import net.frozenblock.lib.networking.api.MovingRestrictionSoundS2C;
+import net.frozenblock.lib.networking.api.PlayerDamageS2C;
+import net.frozenblock.lib.networking.api.ScreenShakeEntityS2C;
+import net.frozenblock.lib.networking.api.ScreenShakeS2C;
 import net.frozenblock.lib.networking.api.SmallWindS2CSync;
+import net.frozenblock.lib.networking.api.SpottingIconRemoveS2C;
+import net.frozenblock.lib.networking.api.SpottingIconS2C;
+import net.frozenblock.lib.networking.api.SpottingIconSyncC2S;
 import net.frozenblock.lib.networking.api.WindS2CSync;
 import net.frozenblock.lib.registry.api.FrozenRegistry;
 import net.frozenblock.lib.sound.api.FrozenSoundPackets;
@@ -92,7 +99,6 @@ public final class FrozenMain implements ModInitializer {
 		FrozenFeatures.init();
 
 		receiveSoundSyncPacket();
-		receiveIconSyncPacket();
 
 		Registry.register(Registry.CONDITION, FrozenMain.id("biome_tag_condition_source"), BiomeTagConditionSource.CODEC.codec());
 
@@ -122,9 +128,8 @@ public final class FrozenMain implements ModInitializer {
 
 		ServerTickEvents.START_SERVER_TICK.register((server) -> WindManager.tick(server, server.overworld()));
 
-		PlayerJoinEvent.ON_JOIN.register((server, player) -> {
-			FrozenPackets.windSync(server, WindManager.overrideWind).sendTo(player);
-		});
+		PlayerJoinEvent.ON_JOIN.register((server, player) ->
+				FrozenPackets.windSync(server, WindManager.overrideWind).sendTo(player));
 
 	}
 
@@ -132,17 +137,7 @@ public final class FrozenMain implements ModInitializer {
 	public static final ResourceLocation STARTING_RESTRICTION_LOOPING_SOUND_PACKET = id("starting_moving_restriction_looping_sound_packet");
 	public static final ResourceLocation MOVING_RESTRICTION_LOOPING_FADING_DISTANCE_SOUND_PACKET = id("moving_restriction_looping_fading_distance_sound_packet");
 	public static final ResourceLocation MOVING_FADING_DISTANCE_SOUND_PACKET = id("moving_fading_distance_sound_packet");
-	public static final ResourceLocation COOLDOWN_CHANGE_PACKET = id("cooldown_change_packet");
 	public static final ResourceLocation REQUEST_LOOPING_SOUND_SYNC_PACKET = id("request_looping_sound_sync_packet");
-
-	public static final ResourceLocation SCREEN_SHAKE_PACKET = id("screen_shake_packet");
-	public static final ResourceLocation SCREEN_SHAKE_ENTITY_PACKET = id("screen_shake_entity_packet");
-
-	public static final ResourceLocation SPOTTING_ICON_PACKET = id("spotting_icon_packet");
-	public static final ResourceLocation SPOTTING_ICON_REMOVE_PACKET = id("spotting_icon_remove_packet");
-	public static final ResourceLocation REQUEST_SPOTTING_ICON_SYNC_PACKET = id("request_spotting_icon_sync_packet");
-
-	public static final ResourceLocation HURT_SOUND_PACKET = id("hurt_sound_packet");
 
 	private static void createPackets() {
 		NETWORKING.register(LocalSoundS2C.class);
@@ -153,6 +148,13 @@ public final class FrozenMain implements ModInitializer {
 		NETWORKING.register(WindS2CSync.class);
 		NETWORKING.register(SmallWindS2CSync.class);
 		NETWORKING.register(BlockPhaseS2C.class);
+		NETWORKING.register(ScreenShakeS2C.class);
+		NETWORKING.register(ScreenShakeEntityS2C.class);
+		NETWORKING.register(SpottingIconS2C.class);
+		NETWORKING.register(SpottingIconRemoveS2C.class);
+		NETWORKING.register(SpottingIconSyncC2S.class);
+		NETWORKING.register(CooldownChangeS2C.class);
+		NETWORKING.register(PlayerDamageS2C.class);
 	}
 
 	public static ResourceLocation id(String path) {
@@ -194,23 +196,6 @@ public final class FrozenMain implements ModInitializer {
 						}
 						for (MovingLoopingFadingDistanceSoundEntityManager.FadingDistanceSoundLoopNBT nbt : livingEntity.getFadingDistanceSounds().getSounds()) {
 							FrozenSoundPackets.createMovingRestrictionLoopingFadingDistanceSound(player, entity, Registry.SOUND_EVENT.get(nbt.getSoundEventID()), Registry.SOUND_EVENT.get(nbt.getSound2EventID()), SoundSource.valueOf(SoundSource.class, nbt.getOrdinal()), nbt.volume, nbt.pitch, nbt.restrictionID, nbt.fadeDist, nbt.maxDist);
-						}
-					}
-				}
-			});
-		});
-	}
-
-	private static void receiveIconSyncPacket() {
-		ServerPlayNetworking.registerGlobalReceiver(FrozenMain.REQUEST_SPOTTING_ICON_SYNC_PACKET, (ctx, player, handler, byteBuf, responseSender) -> {
-			int id = byteBuf.readVarInt();
-			Level dimension = ctx.getLevel(byteBuf.readResourceKey(Registry.DIMENSION_REGISTRY));
-			ctx.execute(() -> {
-				if (dimension != null) {
-					Entity entity = dimension.getEntity(id);
-					if (entity != null) {
-						if (entity instanceof EntitySpottingIconInterface livingEntity) {
-							livingEntity.getSpottingIconManager().sendIconPacket(player);
 						}
 					}
 				}
