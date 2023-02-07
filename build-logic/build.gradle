@@ -1,0 +1,25 @@
+`plugins {
+	id("java")
+	id("java-gradle-plugin")
+	id("groovy-gradle-plugin")
+}
+
+repositories {
+	gradlePluginPortal()
+
+	maven {
+		setName("Quilt")
+		setUrl("https://maven.quiltmc.org/repository/release")
+	}
+	maven {
+		setName("Fabric")
+		setUrl("https://maven.fabricmc.net/")
+	}
+}
+
+dependencies {
+	implementation("fabric-loom:+")
+	implementation("net.kyori:indra-git:+")
+	implementation("org.quiltmc:quilt-json5:+")
+	implementation("org.quiltmc:quilt-gradle-licenser:+")
+}
