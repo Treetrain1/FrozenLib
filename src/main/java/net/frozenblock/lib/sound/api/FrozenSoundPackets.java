@@ -23,6 +23,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.frozenblock.lib.FrozenMain;
+import net.frozenblock.lib.networking.api.MovingFadingDistanceSoundS2C;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -75,17 +76,7 @@ public final class FrozenSoundPackets {
     }
 
     public static void createMovingRestrictionFadingDistanceSound(ServerPlayer player, Entity entity, SoundEvent sound, SoundEvent sound2, SoundSource category, float volume, float pitch, ResourceLocation id, float fadeDist, float maxDist) {
-        FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-        byteBuf.writeVarInt(entity.getId());
-        byteBuf.writeId(Registry.SOUND_EVENT, sound);
-        byteBuf.writeId(Registry.SOUND_EVENT, sound2);
-        byteBuf.writeEnum(category);
-        byteBuf.writeFloat(volume);
-        byteBuf.writeFloat(pitch);
-        byteBuf.writeFloat(fadeDist);
-        byteBuf.writeFloat(maxDist);
-        byteBuf.writeResourceLocation(id);
-        ServerPlayNetworking.send(player, FrozenMain.MOVING_FADING_DISTANCE_SOUND_PACKET, byteBuf);
+        new MovingFadingDistanceSoundS2C(entity.getId(), sound, sound2, category, volume, pitch, fadeDist, maxDist, id).sendTo(player);
     }
 
     public static void createStartingMovingRestrictionLoopingSound(Level world, Entity entity, SoundEvent startingSound, SoundEvent sound, SoundSource category, float volume, float pitch, ResourceLocation id) {

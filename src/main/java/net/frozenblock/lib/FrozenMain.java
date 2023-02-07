@@ -39,6 +39,7 @@ import net.frozenblock.lib.networking.api.FlybySoundS2C;
 import net.frozenblock.lib.networking.api.FrozenPackets;
 import net.frozenblock.lib.networking.api.LocalPlayerSoundS2C;
 import net.frozenblock.lib.networking.api.LocalSoundS2C;
+import net.frozenblock.lib.networking.api.MovingFadingDistanceSoundS2C;
 import net.frozenblock.lib.networking.api.MovingRestrictionSoundS2C;
 import net.frozenblock.lib.networking.api.PlayerDamageS2C;
 import net.frozenblock.lib.networking.api.ScreenShakeEntityS2C;
@@ -155,6 +156,7 @@ public final class FrozenMain implements ModInitializer {
 		NETWORKING.register(SpottingIconSyncC2S.class);
 		NETWORKING.register(CooldownChangeS2C.class);
 		NETWORKING.register(PlayerDamageS2C.class);
+		NETWORKING.register(MovingFadingDistanceSoundS2C.class);
 	}
 
 	public static ResourceLocation id(String path) {

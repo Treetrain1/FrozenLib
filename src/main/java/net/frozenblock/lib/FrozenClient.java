@@ -65,7 +65,6 @@ public final class FrozenClient implements ClientModInitializer {
 
 		receiveStartingRestrictedMovingSoundLoopPacket();
 		receiveMovingRestrictionLoopingFadingDistanceSoundPacket();
-		receiveMovingFadingDistanceSoundPacket();
 
 		Panoramas.addPanorama(new ResourceLocation("textures/gui/title/background/panorama"));
 
@@ -111,32 +110,6 @@ public final class FrozenClient implements ClientModInitializer {
 	@SuppressWarnings("unchecked")
 	private static <T extends Entity> void receiveMovingRestrictionLoopingFadingDistanceSoundPacket() {
 		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.MOVING_RESTRICTION_LOOPING_FADING_DISTANCE_SOUND_PACKET, (ctx, handler, byteBuf, responseSender) -> {
-			int id = byteBuf.readVarInt();
-			SoundEvent sound = byteBuf.readById(Registry.SOUND_EVENT);
-			SoundEvent sound2 = byteBuf.readById(Registry.SOUND_EVENT);
-			SoundSource category = byteBuf.readEnum(SoundSource.class);
-			float volume = byteBuf.readFloat();
-			float pitch = byteBuf.readFloat();
-			float fadeDist = byteBuf.readFloat();
-			float maxDist = byteBuf.readFloat();
-			ResourceLocation predicateId = byteBuf.readResourceLocation();
-			ctx.execute(() -> {
-				ClientLevel level = ctx.level;
-				if (level != null) {
-					T entity = (T) level.getEntity(id);
-					if (entity != null) {
-						SoundPredicate.LoopPredicate<T> predicate = SoundPredicate.getPredicate(predicateId);
-						ctx.getSoundManager().play(new RestrictedMovingFadingDistanceSwitchingSoundLoop<>(entity, sound, category, volume, pitch, predicate, fadeDist, maxDist, volume, false));
-						ctx.getSoundManager().play(new RestrictedMovingFadingDistanceSwitchingSoundLoop<>(entity, sound2, category, volume, pitch, predicate, fadeDist, maxDist, volume, true));
-					}
-				}
-			});
-		});
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T extends Entity> void receiveMovingFadingDistanceSoundPacket() {
-		ClientPlayNetworking.registerGlobalReceiver(FrozenMain.MOVING_FADING_DISTANCE_SOUND_PACKET, (ctx, handler, byteBuf, responseSender) -> {
 			int id = byteBuf.readVarInt();
 			SoundEvent sound = byteBuf.readById(Registry.SOUND_EVENT);
 			SoundEvent sound2 = byteBuf.readById(Registry.SOUND_EVENT);
