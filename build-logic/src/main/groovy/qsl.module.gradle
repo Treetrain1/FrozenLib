@@ -1,0 +1,191 @@
+/*
+ * Buildscript for defining a QSL module.
+ *
+ * This is a convention plugin, and is applied by adding the following to your `plugins` block: `id("qsl.module")`.
+ *
+ * A module is a mod. More specifically the mod exposes a public API for mod developers to use.
+ *
+ * This buildscript declares an extension available under the `qslModule` name. This extension is used to configure
+ * attributes of the module, namely the name of the module, version, parent library, dependent libraries and any
+ * additional things to add to the fabric.mod.json. The buildscript also declares some additional tasks that can be used
+ * to run the game and runTestmodClient, runTestmodServer. These testmod tasks can be run using
+ * `gradle LIBRARY_NAME:MODULE_NAME:TASK_NAME`.
+ */
+
+
+import qsl.internal.Git
+import qsl.internal.ProjectConstants
+import qsl.internal.Versions
+import qsl.internal.extension.QslModuleExtension
+import qsl.internal.extension.QslModuleExtensionImpl
+
+import java.nio.file.Files
+
+plugins {
+	id("java-library")
+	id("maven-publish")
+	id("net.kyori.indra.git")
+	id("org.quiltmc.gradle.licenser")
+	id("qsl.common")
+}
+
+def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
+
+// We need to wait until project evaluation has finished to peek into a complete QSL module extension.
+rootProject.afterEvaluate {
+	// Make sure to call get on any properties
+
+	// Module name should also be the name of artifacts.
+	archivesBaseName = extension.moduleName.get()
+
+	if (extension.library.get() == null) {
+		throw new GradleException("Module $extension.moduleName needs the `library` field set in the qslModule extension")
+	}
+
+	group = "${ProjectConstants.MAVEN_GROUP}.${extension.library.get()}"
+
+
+	publishing {
+		publications {
+			def moduleName = extension.moduleName.get()
+			def library = extension.library.get()
+			boolean publish = true
+
+			try {
+				def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
+						"$moduleName-$project.version" + ".pom").text
+				def metadata = new groovy.xml.XmlSlurper().parseText(xml)
+
+				if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
+					publish = false
+				}
+			} catch (FileNotFoundException ignored) {
+				// No existing version was published.
+			}
+
+			if (publish) {
+				mavenJava(MavenPublication) {
+					from components.java
+
+					pom.withXml {
+						asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
+					}
+				}
+			}
+		}
+	}
+
+
+	(extension as QslModuleExtensionImpl).setupModuleDependencies()
+	// TODO: Anything else to validate.
+	if (version != rootProject.version) {
+		throw new GradleException("Module ${extension.moduleName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
+	}
+}
+
+
+def generateQmj = tasks.register("generateQmj", qsl.internal.task.GenerateQmjTask) {
+	it.qslModule.set(extension)
+	it.outputDir.set(project.file("build/generated/generated_resources/"))
+}
+
+sourceSets {
+	main {
+		resources {
+			// this is needed so that people can use their IDE to compile the project (bypassing Gradle).
+			// you must remember to run the generateQmj task manually
+			srcDir generateQmj
+		}
+	}
+
+	testmod {
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+}
+
+processTestmodResources {
+	filesMatching("fabric.mod.json") {
+		boolean found = false
+
+		Files.readAllLines(it.file.toPath()).stream().forEach {
+			// Look for load_type of "always"
+			if (it.contains("\"load_type\": \"always\"")) {
+				found = true
+			}
+		}
+
+		if (!found) {
+			throw new GradleException("Testmod resource $it does not contain a load_type of \"always\"")
+		}
+	}
+}
+
+dependencies {
+	// testmod sourceSet should depend on everything in the main source set.
+	testmodImplementation sourceSets.main.output
+}
+
+loom {
+	runs {
+		testmodClient {
+			client()
+			source(sourceSets.testmod)
+		}
+
+		testmodServer {
+			server()
+			source(sourceSets.testmod)
+		}
+	}
+}
+
+java {
+	sourceCompatibility = JavaVersion.toVersion(Versions.JAVA_VERSION)
+	targetCompatibility = JavaVersion.toVersion(Versions.JAVA_VERSION)
+
+	withJavadocJar()
+	withSourcesJar()
+}
+
+sourcesJar {
+	dependsOn(generateQmj)
+}
+
+javadoc {
+	options {
+		source = String.valueOf(Versions.JAVA_VERSION)
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		memberLevel = JavadocMemberLevel.PACKAGE
+		links(
+				"https://guava.dev/releases/31.0.1-jre/api/docs/",
+				"https://asm.ow2.io/javadoc/",
+				"https://docs.oracle.com/en/java/javase/17/docs/api/",
+				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
+				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
+		)
+
+		// Disable the overzealous doclint tool in Java 8
+		addStringOption("Xdoclint:none", "-quiet")
+		tags(
+				"author:a",
+				'reason:m:"Reason:"'
+		)
+	}
+
+	exclude {
+		it.file.absolutePath.contains("mixin") || it.file.absolutePath.contains("impl")
+	}
+
+	failOnError false
+}
+
+license {
+	rule rootProject.file("codeformat/COLONEL_MODIFIED_HEADER")
+	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
+	rule rootProject.file("codeformat/HEADER")
+
+	include "**/*.java"
+}

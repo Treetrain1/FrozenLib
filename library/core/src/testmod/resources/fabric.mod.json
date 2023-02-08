@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "frozenlib_core_testmod",
+  "version": "${version}",
+  "name": "FrozenLib Core Library Test Mod",
+  "license": "LGPL-3.0",
+  "environment": "*"
+}

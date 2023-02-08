@@ -34,10 +34,13 @@ rootProject.setName("FrozenLib")
 // Source: Quilt Standard Libraries
 includeBuild("build-logic")
 
+// Libraries
+//library("core")
+
 def library(String library) {
 	include(library)
 
-	def libraryFolder = "lib/"
+	def libraryFolder = "library/"
 	def libraryProject = project(":$library")
 	libraryProject.projectDir = file("$libraryFolder$library")
 

@@ -1,0 +1,92 @@
+/*
+ * Common buildscript for QSL in projects which depend on Minecraft, whether for the API or for running the game.
+ */
+
+
+import net.fabricmc.loom.task.RemapJarTask
+import qsl.internal.Versions
+
+plugins {
+	id("maven-publish")
+	id("fabric-loom")
+}
+
+def ENV = System.getenv()
+
+version = rootProject.version
+
+publishing {
+	repositories {
+		if (ENV.MAVEN_URL) {
+			maven {
+				url ENV.MAVEN_URL
+
+				credentials {
+					username ENV.MAVEN_USERNAME
+					password ENV.MAVEN_PASSWORD
+				}
+			}
+		} else if (ENV.SNAPSHOTS_URL) {
+			maven {
+				url ENV.SNAPSHOTS_URL
+
+				credentials {
+					username ENV.SNAPSHOTS_USERNAME
+					password ENV.SNAPSHOTS_PASSWORD
+				}
+			}
+		} else {
+			mavenLocal()
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${Versions.MINECRAFT_VERSION.version()}"
+	mappings(loom.layered {
+		// please annoy treetrain if this doesnt work
+		it.mappings("org.quiltmc:quilt-mappings:${Versions.MINECRAFT_VERSION.version()}+build.${Versions.QUILT_MAPPINGS}:intermediary-v2")
+		it.parchment("org.parchmentmc.data:parchment-1.19.2:${Versions.PARCHMENT_MAPPINGS}@zip")
+		it.officialMojangMappings {
+			setNameSyntheticMembers(false)
+		}
+	})
+
+	modImplementation "net.fabricmc:fabric-loader:${Versions.LOADER_VERSION}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release.set(Versions.JAVA_VERSION)
+}
+
+sourceSets {
+	testmod
+}
+
+task testmodJar(type: Jar) {
+	group "build"
+	from sourceSets.testmod.output
+	archiveClassifier = "testmod-dev"
+	destinationDirectory = project.file("build/devlibs")
+}
+
+task testmodRemapJar(type: RemapJarTask, dependsOn: testmodJar) {
+	group "build"
+	inputFile = testmodJar.archiveFile
+	classpath.from sourceSets.testmod.compileClasspath
+	archiveClassifier = "testmod"
+}
+build.dependsOn testmodRemapJar
+
+loom {
+	// Upstream Loom breaks this so we can't have nice things until the quilt-gradle replacement
+	//shareRemapCaches = true
+	// Enable runtime only log4j, forces mods to use SLF4J for logging.
+	runtimeOnlyLog4j = true
+
+	mixin {
+		add(sourceSets.main, project.name + ".refmap.json")
+		add(sourceSets.testmod, project.name + '_testmod.refmap.json')
+	}
+}

@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-	id("fabric-loom") version("+")
+	//id("fabric-loom") version("+")
 	id("io.github.juuxel.loom-quiltflower") version("+")
 	id("org.ajoberstar.grgit") version("+")
 	id("org.quiltmc.gradle.licenser") version("+")
@@ -18,6 +18,8 @@ plugins {
     id("eclipse")
     id("idea")
     id("java-library")
+	id("org.jetbrains.gradle.plugin.idea-ext") version("1.1.6")
+	id("qsl.common")
 }
 
 project.ext.release = findProperty("releaseType") == "stable"
@@ -145,7 +147,7 @@ repositories {
 
 dependencies {
     // To change the versions see the gradle.properties file
-    minecraft("com.mojang:minecraft:${minecraft_version}")
+    /*minecraft("com.mojang:minecraft:${minecraft_version}")
 	mappings(loom.layered {
 		// please annoy treetrain if this doesnt work
 		it.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:intermediary-v2")
@@ -154,7 +156,7 @@ dependencies {
 			setNameSyntheticMembers(false)
 		}
 	})
-    modImplementation("net.fabricmc:fabric-loader:${loader_version}")
+    modImplementation("net.fabricmc:fabric-loader:${loader_version}")*/
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
 

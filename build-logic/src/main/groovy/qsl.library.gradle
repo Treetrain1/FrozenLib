@@ -1,0 +1,135 @@
+/*
+ * Buildscript for defining a QSL library.
+ *
+ * This is a convention plugin, and is applied by adding the following to your `plugins` block: `id("qsl.library")`.
+ * A library is not exactly a mod, but rather a maven artifact that depends on a set of modules. For example, the `core`
+ * library may depend on a module to provide the event code, code to add Fabric mods to the crash report, etc.
+ *
+ * This buildscript declares an extension available under the `qslLibrary` name. This extension is used to configure
+ * attributes of the library, namely the name of the library and the library's version. The buildscript also declares
+ * some additional tasks that can be used to run the game and runTestmodClient, runTestmodServer. These testmod tasks
+ * can be run using `gradle LIBRARY_NAME:TASK_NAME`.
+ */
+
+
+import qsl.internal.ProjectConstants
+import qsl.internal.extension.QslLibraryExtension
+
+plugins {
+	id("maven-publish")
+	id("net.kyori.indra.git")
+	id("qsl.common")
+}
+
+def extension = project.extensions.create("qslLibrary", QslLibraryExtension, project)
+
+// We seem to have to use afterEvaluate to verify this stuff
+afterEvaluate {
+	// TODO: Validate the extension parts
+}
+
+sourceSets {
+	testmod {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+}
+
+group = ProjectConstants.MAVEN_GROUP
+
+// Because we rely on the results of our submodules, we use afterEvaluate to setup the sourcesets and testmod tasks.
+afterEvaluate {
+	// Make this project include the compileClasspath and runtimeClasspath of the sub-modules.
+	subprojects.each {
+		project.sourceSets.main.compileClasspath += it.sourceSets.main.compileClasspath
+		project.sourceSets.main.runtimeClasspath += it.sourceSets.main.runtimeClasspath
+		project.sourceSets.testmod.compileClasspath += it.sourceSets.testmod.compileClasspath
+		project.sourceSets.testmod.runtimeClasspath += it.sourceSets.testmod.runtimeClasspath
+	}
+
+	loom {
+		// Define testmod tasks.
+		// These tasks allow you to run with testmods on the runtime classpath and will generate IDE run tasks.
+		runs {
+			testmodClient {
+				client()
+				name = "Testmod Client"
+				source(project.sourceSets.testmod)
+			}
+
+			testmodServer {
+				server()
+				name = "Testmod Server"
+				source(project.sourceSets.testmod)
+			}
+
+			// Auto test server, a server is ran for a few seconds and testmods run to verify things such as mixin
+			// application function properly.
+			// This task is typically ran by the CI server.
+			autoTestServer {
+				server()
+				name = "Auto test server"
+				source(project.sourceSets.testmod)
+				property("fabric.autoTest")
+				programArg("--nogui")
+			}
+		}
+	}
+
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom.withXml {
+					def depsNode = asNode().appendNode("dependencies")
+					rootProject.subprojects.stream().filter {
+						it.path.startsWith(":${extension.libraryName.get()}:")
+					}.forEach {
+						def depNode = depsNode.appendNode("dependency")
+						depNode.appendNode("groupId", it.group)
+						depNode.appendNode("artifactId", it.name)
+						depNode.appendNode("version", it.version)
+						depNode.appendNode("scope", "compile")
+					}
+				}
+			}
+		}
+	}
+
+	loom.disableDeprecatedPomGeneration(publishing.publications.mavenJava)
+
+	// Print the version and throw an exception if it doesn't match
+	if (version != rootProject.version) {
+		throw new GradleException("Library ${extension.libraryName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
+	}
+}
+
+// A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
+// For that reason, we have no use for the jar or remapJar tasks.
+jar {
+	enabled = false
+}
+
+prepareRemapJar {
+	enabled = false
+}
+
+remapJar {
+	enabled = false
+}
+
+project.getTasksByName("checkModuleVersion", true).each {
+	checkLibVersion.mustRunAfter it
+}
+
+rootProject.afterEvaluate {
+	testmodRemapJar { tsk ->
+		nestedJars.setFrom(Collections.emptySet())
+
+		rootProject.subprojects.stream().filter {
+			it.path.startsWith(":${extension.libraryName.get()}:")
+		}.forEach {
+			tsk.nestedJars.from it.tasks.getByName("remapJar")
+			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
+		}
+	}
+}
