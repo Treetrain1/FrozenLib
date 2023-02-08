@@ -1,3 +1,6 @@
+import qsl.internal.ProjectConstants
+import qsl.internal.Versions
+
 buildscript {
 	repositories {
 		gradlePluginPortal()
@@ -24,9 +27,9 @@ plugins {
 
 project.ext.release = findProperty("releaseType") == "stable"
 
-setArchivesBaseName(project.archives_base_name)
+setArchivesBaseName(ProjectConstants.ARCHIVES_BASE_NAME)
 setVersion(getVersion())
-setGroup(project.maven_group)
+setGroup(ProjectConstants.MAVEN_GROUP)
 
 sourceSets {
     testmod {
@@ -146,25 +149,15 @@ repositories {
 }
 
 dependencies {
-    // To change the versions see the gradle.properties file
-    /*minecraft("com.mojang:minecraft:${minecraft_version}")
-	mappings(loom.layered {
-		// please annoy treetrain if this doesnt work
-		it.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:intermediary-v2")
-		it.parchment("org.parchmentmc.data:parchment-1.19.2:${parchment_mappings}@zip")
-		it.officialMojangMappings {
-			setNameSyntheticMembers(false)
-		}
-	})
-    modImplementation("net.fabricmc:fabric-loader:${loader_version}")*/
+
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API_VERSION}")
 
     // Mod Menu
-    modImplementation("com.terraformersmc:modmenu:${modmenu_version}")
+    modImplementation("com.terraformersmc:modmenu:${Versions.MOD_MENU_VERSION}")
 
     // Cloth Config
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}") {
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${Versions.CLOTH_CONFIG_VERSION}") {
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.terraformersmc")
     }
@@ -176,10 +169,10 @@ dependencies {
 
     // only affects runClient, does not affect gradlew build. add -PuseThirdPartyMods=false to not use these
     if (findProperty("useThirdPartyMods") != "false") {
-        modRuntimeOnly("maven.modrinth:ferrite-core:${ferritecore_version}")
-        modRuntimeOnly("maven.modrinth:lazydfu:${lazydfu_version}")
+        modRuntimeOnly("maven.modrinth:ferrite-core:${Versions.FERRITECORE_VERSION}")
+        modRuntimeOnly("maven.modrinth:lazydfu:${Versions.LAZYDFU_VERSION}")
         //modRuntimeOnly("maven.modrinth:starlight:${starlight_version}")
-        modRuntimeOnly("maven.modrinth:lithium:${lithium_version}")
+        modRuntimeOnly("maven.modrinth:lithium:${Versions.LITHIUM_VERSION}")
 
         // Sodium Related
 
@@ -192,19 +185,19 @@ dependencies {
         modRuntimeOnly "io.github.douira:glsl-transformer:0.27.0"
         modRuntimeOnly "net.caffeinemc:mixin-config:1.0.0+1.17"*/
 
-        modRuntimeOnly("maven.modrinth:entityculling:${entityculling_version}")
+        modRuntimeOnly("maven.modrinth:entityculling:${Versions.ENTITYCULLING_VERSION}")
         //modRuntimeOnly("maven.modrinth:c2me-fabric:0.2.0+alpha.8.32+1.19.1-rc3")
-        modRuntimeOnly("maven.modrinth:ksyxis:${ksyxis_version}")
+        modRuntimeOnly("maven.modrinth:ksyxis:${Versions.KSYXIS_VERSION}")
         //modRuntimeOnly("maven.modrinth:iris:1.19.x-v1.2.5")
-        modRuntimeOnly("maven.modrinth:memoryleakfix:${memoryleakfix_version}")
-        modRuntimeOnly("maven.modrinth:no-unused-chunks:${no_unused_chunks_version}")
+        modRuntimeOnly("maven.modrinth:memoryleakfix:${Versions.MEMORYLEAKFIX_VERSION}")
+        modRuntimeOnly("maven.modrinth:no-unused-chunks:${Versions.NO_UNUSED_CHUNKS_VERSION}")
     }
 }
 
 processResources {
 	Map<String, Object> properties = new HashMap<>()
 	properties.put("version", project.version)
-	properties.put("minecraft_version", minecraft_version)
+	properties.put("minecraft_version", Versions.MINECRAFT_VERSION.version())
 
 	properties.forEach((a, b) -> inputs.property(a, b))
 
@@ -272,7 +265,7 @@ artifacts {
 }
 
 String getVersion() {
-    String version = "${mod_version}-${mod_loader}+${minecraft_version}"
+    String version = "${Versions.FROZENLIB_VERSION}-${ProjectConstants.MOD_LOADER}+${Versions.MINECRAFT_VERSION.version()}"
 
     if (!project.release) {
         version += "-unstable"
@@ -341,4 +334,119 @@ if (!project.release) {
 	build.dependsOn(applyLicenses)
 }
 
-apply from: "gradle/publishing.gradle"
+import java.nio.file.Files
+
+ext {
+	Properties properties = new Properties()
+	properties.load(new FileInputStream(file("gradle/publishing.properties")))
+	properties.forEach((a, b) -> set(a, b))
+
+	modrinth_version = makeModrinthVersion(Versions.FROZENLIB_VERSION)
+	display_name = makeName(Versions.FROZENLIB_VERSION)
+
+	changelog_text = getChangelog(file(changelog_file))
+}
+
+String makeName(String version) {
+	return "${version} (${Versions.MINECRAFT_VERSION.version()})"
+}
+
+String makeModrinthVersion(String version) {
+	return "${version}-mc${Versions.MINECRAFT_VERSION.version()}"
+}
+
+static String getChangelog(File changelogFile) {
+	String text = Files.readString(changelogFile.toPath())
+	String[] split = text.split("-----------------")
+	if (split.length != 2)
+		throw new IllegalStateException("Malformed changelog")
+	return split[1].trim()
+}
+
+curseforge {
+	String token = System.getenv("CURSEFORGE_TOKEN")
+	apiKey = token == null || token.isEmpty() ? "unset" : token
+	String gameVersion = curseforge_minecraft_version != "null" ? curseforge_minecraft_version : Versions.MINECRAFT_VERSION.version()
+	project {
+		id = curseforge_id
+		changelog = changelog_text
+		releaseType = release_type
+		addGameVersion("Fabric")
+		addGameVersion("Quilt")
+		addGameVersion(gameVersion)
+		relations {
+			requiredDependency("fabric-api")
+			optionalDependency("cloth-config")
+		}
+		mainArtifact(file("build/libs/${remapJar.archiveBaseName.get()}-${version}.jar")) {
+			displayName = display_name
+		}
+		afterEvaluate {
+			uploadTask.dependsOn(remapJar)
+		}
+	}
+	curseGradleOptions.forgeGradleIntegration = false
+}
+
+modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
+	projectId = modrinth_id
+	versionNumber = modrinth_version
+	versionName = display_name
+	versionType = release_type
+	changelog = changelog_text
+	uploadFile = file("build/libs/${remapJar.archiveBaseName.get()}-${version}.jar")
+	gameVersions = [Versions.MINECRAFT_VERSION.version()]
+	loaders = ["fabric", "quilt"]
+	dependencies {
+		required.project("fabric-api")
+		optional.project("cloth-config")
+	}
+}
+
+def getBranch() {
+	def env = System.getenv()
+	if (env.GITHUB_REF) {
+		def branch = env.GITHUB_REF
+		return branch.substring(branch.lastIndexOf("/") + 1)
+	}
+
+	if (grgit == null) {
+		return "unknown"
+	}
+
+	def branch = grgit.branch.current().name
+	return branch.substring(branch.lastIndexOf("/") + 1)
+}
+
+import org.kohsuke.github.GHReleaseBuilder
+import org.kohsuke.github.GitHub
+
+tasks.register('github') {
+	dependsOn remapJar
+	onlyIf {
+		env.GITHUB_TOKEN
+	}
+
+	doLast {
+		def github = GitHub.connectUsingOAuth(env.GITHUB_TOKEN as String)
+		def repository = github.getRepository(env.GITHUB_REPOSITORY)
+
+		def releaseBuilder = new GHReleaseBuilder(repository, version as String)
+		releaseBuilder.name("$project.version-${Versions.MINECRAFT_VERSION.version()}")
+		releaseBuilder.body(changelog_text)
+		releaseBuilder.commitish(getBranch())
+		releaseBuilder.prerelease(release_type != "release")
+
+		def ghRelease = releaseBuilder.create()
+		ghRelease.uploadAsset(remapJar.archiveFile.get().getAsFile(), "application/java-archive")
+		ghRelease.uploadAsset(remapSourcesJar.archiveFile.get().getAsFile(), "application/java-archive")
+		ghRelease.uploadAsset(javadocJar.archiveFile.get().getAsFile(), "application/java-archive")
+	}
+}
+
+tasks.register('publishMod') {
+	dependsOn(github)
+	dependsOn(tasks.getByName("curseforge"))
+	dependsOn(tasks.getByName("modrinth"))
+}
