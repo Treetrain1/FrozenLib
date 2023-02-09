@@ -35,7 +35,7 @@ rootProject.setName("FrozenLib")
 includeBuild("build-logic")
 
 // Libraries
-//library("core")
+library("core")
 
 def library(String library) {
 	include(library)

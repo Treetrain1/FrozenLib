@@ -2,7 +2,9 @@ package qsl.internal.extension;
 
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.execution.plan.ActionNode;
 import org.jetbrains.annotations.Nullable;
 import qsl.internal.dependency.QslLibraryDependency;
 
@@ -23,7 +25,7 @@ public interface QslModuleExtension {
 	Property<String> getName();
 
 	/**
-	 * The mod id of this module. Usually "frozenLib" + the module name
+	 * The mod id of this module. Usually "frozenlib" + the module name
 	 */
 	Property<String> getId();
 
@@ -42,6 +44,11 @@ public interface QslModuleExtension {
 	 * Disables expecting "$MOD_ID.mixins.json" to be present in the resources directory
 	 */
 	void noMixins();
+
+	/**
+	 * Configures the additional mixins for this module.
+	 */
+	void additionalMixins(String... mixins);
 
 	/**
 	 * Configures this module's dependencies on other modules.

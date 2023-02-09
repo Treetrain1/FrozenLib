@@ -11,6 +11,7 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
 import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.NamedDomainObjectList;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.model.ObjectFactory;
@@ -37,6 +38,7 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	private final Property<Environment> environment;
 	private final Property<Boolean> hasAccessWidener;
 	private final Property<Boolean> hasMixins;
+	private final ListProperty<String> additionalMixins;
 	private final NamedDomainObjectContainer<QslLibraryDependency> moduleDependencyDefinitions;
 	private final ListProperty<ProvideEntry> provides;
 	private final NamedDomainObjectContainer<NamedWriteOnlyList> entrypoints;
@@ -61,6 +63,7 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 		this.hasAccessWidener.finalizeValueOnRead();
 		this.hasMixins = factory.property(Boolean.class).convention(true);
 		this.hasMixins.finalizeValueOnRead();
+		this.additionalMixins = factory.listProperty(String.class);
 		this.entrypoints = factory.domainObjectContainer(NamedWriteOnlyList.class, n -> new NamedWriteOnlyList(factory, n));
 		this.moduleDependencyDefinitions = factory.domainObjectContainer(QslLibraryDependency.class, name -> new QslLibraryDependency(factory, name));
 		this.provides = factory.listProperty(ProvideEntry.class);
@@ -111,6 +114,16 @@ public class QslModuleExtensionImpl extends QslExtension implements QslModuleExt
 	@Input
 	public Property<Boolean> getHasMixins() {
 		return hasMixins;
+	}
+
+	@Nested
+	public ListProperty<String> getAdditionalMixins() {
+		return this.additionalMixins;
+	}
+
+	@Override
+	public void additionalMixins(String... mixins) {
+		this.additionalMixins.addAll(mixins);
 	}
 
 	public void noMixins() {

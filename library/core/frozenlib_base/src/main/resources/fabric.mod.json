@@ -67,7 +67,7 @@
     "mixin/frozenlib_quiltmc_surface_rule.mixins.json",
     "mixin/frozenlib_quiltmc_resource_loader.mixins.json"
   ],
-  "accessWidener": "frozenlib.accesswidener",
+  "accessWidener": "frozenlib_base.accesswidener",
   "depends": {
 	"fabricloader": ">=0.14.12",
 	"fabric-api": ">=0.73.0",

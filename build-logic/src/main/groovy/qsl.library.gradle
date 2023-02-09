@@ -103,33 +103,6 @@ afterEvaluate {
 	}
 }
 
-// A library isn't truly a distributed artifact, rather it is just maven metadata to depend on the modules of a library.
-// For that reason, we have no use for the jar or remapJar tasks.
-jar {
-	enabled = false
-}
-
-prepareRemapJar {
-	enabled = false
-}
-
-remapJar {
-	enabled = false
-}
-
 project.getTasksByName("checkModuleVersion", true).each {
 	checkLibVersion.mustRunAfter it
-}
-
-rootProject.afterEvaluate {
-	testmodRemapJar { tsk ->
-		nestedJars.setFrom(Collections.emptySet())
-
-		rootProject.subprojects.stream().filter {
-			it.path.startsWith(":${extension.libraryName.get()}:")
-		}.forEach {
-			tsk.nestedJars.from it.tasks.getByName("remapJar")
-			tsk.nestedJars.from it.tasks.getByName("testmodRemapJar")
-		}
-	}
 }

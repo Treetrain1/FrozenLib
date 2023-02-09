@@ -18,6 +18,7 @@ import qsl.internal.ProjectConstants
 import qsl.internal.Versions
 import qsl.internal.extension.QslModuleExtension
 import qsl.internal.extension.QslModuleExtensionImpl
+import qsl.internal.task.GenerateQmjTask
 
 import java.nio.file.Files
 
@@ -32,7 +33,7 @@ plugins {
 def extension = project.extensions.create(QslModuleExtension, "qslModule", QslModuleExtensionImpl, project)
 
 // We need to wait until project evaluation has finished to peek into a complete QSL module extension.
-rootProject.afterEvaluate {
+/*rootProject.afterEvaluate {
 	// Make sure to call get on any properties
 
 	// Module name should also be the name of artifacts.
@@ -45,46 +46,15 @@ rootProject.afterEvaluate {
 	group = "${ProjectConstants.MAVEN_GROUP}.${extension.library.get()}"
 
 
-	publishing {
-		publications {
-			def moduleName = extension.moduleName.get()
-			def library = extension.library.get()
-			boolean publish = true
-
-			try {
-				def xml = new URL("https://maven.quiltmc.org/repository/release/org/quiltmc/qsl/$library/$moduleName/$project.version/" +
-						"$moduleName-$project.version" + ".pom").text
-				def metadata = new groovy.xml.XmlSlurper().parseText(xml)
-
-				if (metadata.properties.hash == Git.getLatestCommitHash(project)) {
-					publish = false
-				}
-			} catch (FileNotFoundException ignored) {
-				// No existing version was published.
-			}
-
-			if (publish) {
-				mavenJava(MavenPublication) {
-					from components.java
-
-					pom.withXml {
-						asNode().appendNode("properties").appendNode("hash", Git.getLatestCommitHash(project))
-					}
-				}
-			}
-		}
-	}
-
-
 	(extension as QslModuleExtensionImpl).setupModuleDependencies()
 	// TODO: Anything else to validate.
 	if (version != rootProject.version) {
 		throw new GradleException("Module ${extension.moduleName.get()} version ($version) does not match root project version ($rootProject.version). Do not change it!")
 	}
-}
+}*/
 
 
-def generateQmj = tasks.register("generateQmj", qsl.internal.task.GenerateQmjTask) {
+def generateQmj = tasks.register("generateQmj", GenerateQmjTask) {
 	it.qslModule.set(extension)
 	it.outputDir.set(project.file("build/generated/generated_resources/"))
 }
@@ -149,7 +119,7 @@ java {
 }
 
 sourcesJar {
-	dependsOn(generateQmj)
+	//dependsOn(generateQmj)
 }
 
 javadoc {
@@ -164,7 +134,7 @@ javadoc {
 				"https://docs.oracle.com/en/java/javase/17/docs/api/",
 				"https://jenkins.liteloader.com/job/Mixin/javadoc/",
 				"https://logging.apache.org/log4j/2.x/log4j-api/apidocs/",
-				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.MAPPINGS_BUILD}-javadoc.jar/"
+				"https://maven.quiltmc.org/repository/release/org/quiltmc/quilt-mappings/${Versions.MINECRAFT_VERSION.version()}+build.${Versions.QUILT_MAPPINGS}/quilt-mappings-${Versions.MINECRAFT_VERSION.version()}+build.${Versions.QUILT_MAPPINGS}-javadoc.jar/"
 		)
 
 		// Disable the overzealous doclint tool in Java 8
@@ -183,8 +153,7 @@ javadoc {
 }
 
 license {
-	rule rootProject.file("codeformat/COLONEL_MODIFIED_HEADER")
-	rule rootProject.file("codeformat/FABRIC_MODIFIED_HEADER")
+	rule rootProject.file("codeformat/QUILT_MODIFIED_HEADER")
 	rule rootProject.file("codeformat/HEADER")
 
 	include "**/*.java"

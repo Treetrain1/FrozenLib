@@ -9,6 +9,7 @@ import qsl.internal.Versions
 plugins {
 	id("maven-publish")
 	id("fabric-loom")
+	id("io.github.juuxel.loom-quiltflower")
 }
 
 def ENV = System.getenv()
@@ -17,27 +18,7 @@ version = rootProject.version
 
 publishing {
 	repositories {
-		if (ENV.MAVEN_URL) {
-			maven {
-				url ENV.MAVEN_URL
-
-				credentials {
-					username ENV.MAVEN_USERNAME
-					password ENV.MAVEN_PASSWORD
-				}
-			}
-		} else if (ENV.SNAPSHOTS_URL) {
-			maven {
-				url ENV.SNAPSHOTS_URL
-
-				credentials {
-					username ENV.SNAPSHOTS_USERNAME
-					password ENV.SNAPSHOTS_PASSWORD
-				}
-			}
-		} else {
-			mavenLocal()
-		}
+		mavenLocal()
 	}
 }
 
@@ -53,6 +34,9 @@ dependencies {
 	})
 
 	modImplementation "net.fabricmc:fabric-loader:${Versions.LOADER_VERSION}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API_VERSION}")
 }
 
 tasks.withType(JavaCompile).configureEach {

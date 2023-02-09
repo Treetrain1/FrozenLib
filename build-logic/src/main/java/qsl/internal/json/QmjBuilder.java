@@ -26,21 +26,14 @@ public final class QmjBuilder {
 				.name("name").value(ext.getName().get())
 				.name("description").value(ext.getDescription().get())
 				.name("authors").beginArray() // root object -> authors
-					.name("FrozenBlock")
-				.endArray()
+				.endArray() // authors -> root object
 				.name("contributors").beginArray() // root object -> contributors
-					.name("Treetrain1")
-					.name("Luna")
-					.name("Liukrast")
-					.name("Merp")
-					.name("Xfrtrex")
-					.name("Soro")
-				.endArray()
+				.endArray() // contributors -> root object
 				.name("contact").beginObject() // root object -> contact
 					.name("homepage").value("https://www.modrinth.com/mod/FrozenLib")
 					.name("sources").value("https://github.com/FrozenBlock/FrozenLib")
 					.name("issues").value("https://github.com/FrozenBlock/FrozenLib/issues")
-				.endObject()
+				.endObject() // contact -> root object
 				.name("license").value(ProjectConstants.LICENSE)
 				.name("icon").value("assets/" + ext.getId().get() + "/icon.png");
 
@@ -120,9 +113,24 @@ public final class QmjBuilder {
 			writer.endObject(); // entrypoints -> root object
 		}
 
-		if (ext.getHasMixins().get()) {
-			writer.name("mixin").value(ext.getId().get() + ".mixins.json");
+		try {
+			writer.name("mixins").beginArray();
+		} catch (IOException ignored) {
 		}
+
+		if (ext.getHasMixins().get()) {
+			//writer.name("mixin/" + ext.getId().get() + ".mixins.json");
+		}
+
+		var additionalMixins = ext.getAdditionalMixins().get();
+		if (!additionalMixins.isEmpty()) {
+			for (String mixin : additionalMixins) {
+				System.out.println("added " + mixin);
+				writer.name(mixin);
+			}
+		}
+
+		writer.endArray();
 
 		if (ext.getHasAccessWidener().get()) {
 			writer.name("access_widener").value(ext.getId().get() + ".accesswidener");
