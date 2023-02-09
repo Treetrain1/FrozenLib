@@ -133,7 +133,7 @@ public final class QmjBuilder {
 		writer.endArray();
 
 		if (ext.getHasAccessWidener().get()) {
-			writer.name("access_widener").value(ext.getId().get() + ".accesswidener");
+			writer.name("accessWidener").value(ext.getId().get() + ".accesswidener");
 		}
 
 		// TODO: environment
