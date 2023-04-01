@@ -36,12 +36,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
-public class ServerPlayerMixin {
+public abstract class ServerPlayerMixin {
 
 	@Shadow
 	public ServerGamePacketListenerImpl connection;
+
 	@Shadow
-	private boolean isChangingDimension;
+	public abstract boolean isChangingDimension();
 
 	@Unique
 	public Optional<ArrayList<SaveableItemCooldowns.SaveableCooldownInstance>> frozenLib$savedItemCooldowns = Optional.empty();
@@ -60,7 +61,7 @@ public class ServerPlayerMixin {
 
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void wilderWild$tick(CallbackInfo info) {
-		if (this.frozenLib$savedItemCooldowns.isPresent() && this.connection != null && this.connection.isAcceptingMessages() && !this.isChangingDimension) {
+		if (this.frozenLib$savedItemCooldowns.isPresent() && this.connection != null && this.connection.isAcceptingMessages() && !this.isChangingDimension()) {
 			SaveableItemCooldowns.setCooldowns(this.frozenLib$savedItemCooldowns.get(), ServerPlayer.class.cast(this));
 			this.frozenLib$savedItemCooldowns = Optional.empty();
 		}

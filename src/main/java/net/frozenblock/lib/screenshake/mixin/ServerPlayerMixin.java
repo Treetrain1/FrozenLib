@@ -35,12 +35,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
-public class ServerPlayerMixin {
+public abstract class ServerPlayerMixin {
 
 	@Shadow
 	public ServerGamePacketListenerImpl connection;
+
 	@Shadow
-	private boolean isChangingDimension;
+	public abstract boolean isChangingDimension();
 
 	@Unique @Nullable
 	private CompoundTag frozenLib$savedScreenShakesTag;
@@ -50,7 +51,7 @@ public class ServerPlayerMixin {
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	public void frozenLib$syncScreenShakes(CallbackInfo info) {
 		EntityScreenShakeManager entityScreenShakeManager = ((EntityScreenShakeInterface)ServerPlayer.class.cast(this)).getScreenShakeManager();
-		if (!this.frozenLib$hasSyncedScreenShakes && this.connection != null && this.connection.isAcceptingMessages() && !this.isChangingDimension) {
+		if (!this.frozenLib$hasSyncedScreenShakes && this.connection != null && this.connection.isAcceptingMessages() && !this.isChangingDimension()) {
 			entityScreenShakeManager.syncWithPlayer(ServerPlayer.class.cast(this));
 			this.frozenLib$hasSyncedScreenShakes = true;
 		}

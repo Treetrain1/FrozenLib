@@ -59,7 +59,7 @@ public class EntityMixin implements FrozenStartTrackingEntityInterface, EntitySt
 		((EntityScreenShakeInterface)entity).getScreenShakeManager().syncWithPlayer(serverPlayer);
 	}
 
-	@Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;stepOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;stepOnBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/Block;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void frozenLib$runSteppedOn(MoverType type, Vec3 pos, CallbackInfo ci, Vec3 vec3, double d, boolean bl, boolean bl2, BlockPos blockPos, BlockState blockState, Block block) {
 		this.frozenLib$onSteppedOnBlock(this.level, blockPos, blockState);
 	}

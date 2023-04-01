@@ -61,7 +61,7 @@ public abstract class MultifaceClusterBlock extends MultifaceBlock implements Si
 
 
     public MultifaceClusterBlock(int height, int xzOffset, Properties properties) {
-        super(properties);
+        super(properties.pushReaction(PushReaction.DESTROY));
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
         this.upAabb = Block.box(xzOffset, 0.0, xzOffset, 16 - xzOffset, height, (16 - xzOffset));
         this.downAabb = Block.box(xzOffset, (16 - height), xzOffset, (16 - xzOffset), 16.0, (16 - xzOffset));
@@ -111,19 +111,13 @@ public abstract class MultifaceClusterBlock extends MultifaceBlock implements Si
     @Override
 	@NotNull
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+        return Boolean.TRUE.equals(state.getValue(WATERLOGGED)) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
-    }
-
-    @Override
-	@NotNull
-    public PushReaction getPistonPushReaction(BlockState blockState) {
-        return PushReaction.DESTROY;
     }
 
     @Override

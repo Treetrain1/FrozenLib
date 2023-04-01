@@ -185,12 +185,6 @@ repositories {
         setUrl("https://maven.siphalor.de")
     }*/
     maven {
-        setUrl("https://maven.flashyreese.me/releases")
-    }
-    maven {
-        setUrl("https://maven.flashyreese.me/snapshots")
-    }
-    maven {
         setUrl("https://maven.parchmentmc.org")
     }
     maven {
@@ -209,7 +203,7 @@ dependencies {
     minecraft("com.mojang:minecraft:$minecraft_version")
 	mappings(loom.layered {
 		// please annoy treetrain if this doesnt work
-		mappings("org.quiltmc:quilt-mappings:$quilt_mappings:intermediary-v2")
+		//mappings("org.quiltmc:quilt-mappings:$quilt_mappings:intermediary-v2")
         parchment("org.parchmentmc.data:parchment-1.19.3:$parchment_mappings@zip")
 		officialMojangMappings {
 			nameSyntheticMembers = false
