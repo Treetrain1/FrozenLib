@@ -18,6 +18,8 @@
 
 package org.quiltmc.qsl.frozenblock.misc.datafixerupper.api;
 
+import org.jetbrains.annotations.Nullable;
+
 public record ModUpgrade(String modId, @Nullable String key, int version, int newVersion) {
 
     public String getFullKey() {

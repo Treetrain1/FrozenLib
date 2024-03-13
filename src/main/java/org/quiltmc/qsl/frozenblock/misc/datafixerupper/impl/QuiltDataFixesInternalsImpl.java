@@ -23,6 +23,7 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -31,6 +32,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.FabricDataFixerUpper;
 import org.quiltmc.qsl.frozenblock.misc.datafixerupper.mixin.DataFixTypesAccessor;
 
 /**
@@ -44,16 +46,19 @@ public final class QuiltDataFixesInternalsImpl extends QuiltDataFixesInternals {
 	private Map<String, DataFixerEntry> modMinecraftDataFixers;
     private boolean frozen;
 
+	private final CombinedDataFixer combinedDataFixer;
+
     public QuiltDataFixesInternalsImpl(@NotNull Schema latestVanillaSchema) {
         this.latestVanillaSchema = latestVanillaSchema;
 
         this.modDataFixers = new Object2ReferenceOpenHashMap<>();
 		this.modMinecraftDataFixers = new Object2ReferenceOpenHashMap<>();
+		this.combinedDataFixer = new CombinedDataFixerUpper(this.modDataFixers);
         this.frozen = false;
     }
 
     @Override
-    public void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull DataFixer dataFixer) {
+    public void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull FabricDataFixerUpper dataFixer) {
         if (this.modDataFixers.containsKey(modId)) {
             throw new IllegalArgumentException("Mod '" + modId + "' already has a registered data fixer");
         }
@@ -67,7 +72,7 @@ public final class QuiltDataFixesInternalsImpl extends QuiltDataFixesInternals {
     }
 
 	@Override
-	public void registerMinecraftFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull DataFixer dataFixer) {
+	public void registerMinecraftFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull FabricDataFixerUpper dataFixer) {
 		if (this.modMinecraftDataFixers.containsKey(modId)) {
 			throw new IllegalArgumentException("Mod '" + modId + "' already has a registered Minecraft-version-based data fixer");
 		}
@@ -89,28 +94,26 @@ public final class QuiltDataFixesInternalsImpl extends QuiltDataFixesInternals {
     public @NotNull Dynamic<Tag> updateWithAllFixers(@NotNull DataFixTypes dataFixTypes, @NotNull Dynamic<Tag> current) {
         var compound = (CompoundTag) current.getValue();
 
+		Map<DataFixerEntry, Integer> map = new HashMap<>();
 		for (Map.Entry<String, DataFixerEntry> entry : this.modMinecraftDataFixers.entrySet()) {
 			int modDataVersion = getModMinecraftDataVersion(compound, entry.getKey());
 			DataFixerEntry dataFixerEntry = entry.getValue();
-			current = dataFixerEntry.dataFixer().update(
-				DataFixTypesAccessor.class.cast(dataFixTypes).getType(),
-				current,
-				modDataVersion,
-				dataFixerEntry.currentVersion()
-			);
+
+			map.put(dataFixerEntry, modDataVersion);
 		}
 
-        for (Map.Entry<String, DataFixerEntry> entry : this.modDataFixers.entrySet()) {
-            int modDataVersion = getModDataVersion(compound, entry.getKey());
-            DataFixerEntry dataFixerEntry = entry.getValue();
+		for (Map.Entry<String, DataFixerEntry> entry : this.modDataFixers.entrySet()) {
+			int modDataVersion = getModDataVersion(compound, entry.getKey());
+			DataFixerEntry dataFixerEntry = entry.getValue();
 
-			current = dataFixerEntry.dataFixer().update(
-				DataFixTypesAccessor.class.cast(dataFixTypes).getType(),
-				current,
-				modDataVersion,
-				dataFixerEntry.currentVersion()
-			);
-        }
+			map.put(dataFixerEntry, modDataVersion);
+		}
+
+		current = this.combinedDataFixer.update(
+			DataFixTypesAccessor.class.cast(dataFixTypes).getType(),
+			current,
+			map
+		);
 
         return current;
     }

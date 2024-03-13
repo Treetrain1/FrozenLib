@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.FabricDataFixerUpper;
 import org.slf4j.Logger;
 
 /**
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
 public abstract class QuiltDataFixesInternals {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public record DataFixerEntry(DataFixer dataFixer, int currentVersion) {}
+    public record DataFixerEntry(FabricDataFixerUpper dataFixer, int currentVersion) {}
 
     @Contract(pure = true)
     @Range(from = 0, to = Integer.MAX_VALUE)
@@ -81,11 +82,11 @@ public abstract class QuiltDataFixesInternals {
         return instance;
     }
 
-    public abstract void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull DataFixer dataFixer);
+    public abstract void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull FabricDataFixerUpper dataFixer);
 
     public abstract @Nullable DataFixerEntry getFixerEntry(@NotNull String modId);
 
-	public abstract void registerMinecraftFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull DataFixer dataFixer);
+	public abstract void registerMinecraftFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull FabricDataFixerUpper dataFixer);
 
 	public abstract @Nullable DataFixerEntry getMinecraftFixerEntry(@NotNull String modId);
 

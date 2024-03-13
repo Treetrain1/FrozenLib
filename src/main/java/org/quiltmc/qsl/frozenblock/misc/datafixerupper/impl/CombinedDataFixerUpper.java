@@ -18,23 +18,25 @@
 
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
-package org.quiltmc.qsl.frozenblock.misc.datafixerupper.api;
+package org.quiltmc.qsl.frozenblock.misc.datafixerupper.impl;
 
 import com.google.common.collect.Lists;
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.DataFixUtils;
+import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.datafixers.functions.PointFreeRule;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
-import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.FabricDataFixerUpper;
+import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.ModUpgrade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /*
  * Optimizing functions
@@ -77,80 +79,68 @@ public class CombinedDataFixerUpper implements CombinedDataFixer {
     ));
 
     // map of datafixer key -> datafixer
-    private final Map<String, FabricDataFixerUpper> modDataFixers;
-    private final Long2ObjectMap<TypeRewriteRule> rules = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+    private final Map<String, QuiltDataFixesInternals.DataFixerEntry> modDataFixers;
 
-    protected CombinedDataFixerUpper(final Map<String, FabricDataFixerUpper> modDataFixers) {
+	protected CombinedDataFixerUpper(final Map<String, QuiltDataFixesInternals.DataFixerEntry> modDataFixers) {
         this.modDataFixers = modDataFixers;
     }
 
     @Override
-    public <T> Dynamic<T> update(final DSL.TypeReference type, final Dynamic<T> input, final List<ModUpgrade> versionUpgrades) {
-        Dynamic<T> output = input;
+    public <T> Dynamic<T> update(final DSL.TypeReference type, final Dynamic<T> input, final Map<QuiltDataFixesInternals.DataFixerEntry, Integer> versionUpgrades) {
+		if (this.modDataFixers().isEmpty())
+			return input;
+
         List<TypeRewriteRule> rules = Lists.newArrayList();
+		Type<?> dataType = null;
+		Type<?> newType = null;
 
-        for (ModUpgrade upgrade : versionUpgrades) {
-            String key = upgrade.getFullKey();
-            int version = upgrade.version();
-            int newVersion = upgrade.newVersion();
+        for (Map.Entry<QuiltDataFixesInternals.DataFixerEntry, Integer> upgrade : versionUpgrades.entrySet()) {
+            QuiltDataFixesInternals.DataFixerEntry entry = upgrade.getKey();
+			FabricDataFixerUpper dataFixer = entry.dataFixer();
+
+			int version = upgrade.getValue();
+			int newVersion = entry.currentVersion();
             if (version < newVersion) {
-                FabricDataFixerUpper dataFixer = this.modDataFixers().get(key);
+				Type<?> dataType1 = dataFixer.getType(type, version);
+				Type<?> newType1 = dataFixer.getType(type, newVersion);
 
-                final Type<?> dataType = dataFixer.getType(type, version);
-                final DataResult<T> read = dataType.readAndWrite(input.getOps(), getType(type, newVersion), getRule(version, newVersion), OPTIMIZATION_RULE, input.getValue());
-                final T result = read.resultOrPartial(LOGGER::error).orElse(input.getValue());
-                output = new Dynamic<>(input.getOps(), result);
+				if (dataType == null)
+					dataType = dataType1;
+				else if (dataType != dataType1)
+					continue;
+
+				if (newType == null)
+					newType = newType1;
+				else if (newType != newType1)
+					continue;
+
+                dataFixer.addRules(rules, version, newVersion);
             }
         }
 
-        final DataResult<T> read = dataType.readAndWrite(input.getOps(), getType(type))
-        return output;
+		if (dataType == null || newType == null)
+			return input;
+
+        final DataResult<T> read = dataType.readAndWrite(input.getOps(), newType, TypeRewriteRule.seq(rules), OPTIMIZATION_RULE, input.getValue());
+		final T result = read.resultOrPartial(LOGGER::error).orElse(input.getValue());
+        return new Dynamic<>(input.getOps(), result);
     }
 
-    @Override
-    public Schema getSchema(final int key) {
-        return schemas.get(getLowestSchemaSameVersion(schemas, key));
-    }
+	@Override
+	public Schema getSchema(String modId, int version) {
+		return this.modDataFixers().get(modId).dataFixer().getSchema(version);
+	}
 
-    protected Type<?> getType(final DSL.TypeReference type, final int version) {
-        return getSchema(DataFixUtils.makeKey(version)).getTypeRaw(type);
-    }
+	@Override
+	public Schema getSchema(String modId, @Nullable String key, int version) {
+		String finalKey = modId;
+		if (key != null)
+			finalKey += ('_' + key);
 
-    protected static int getLowestSchemaSameVersion(final Int2ObjectSortedMap<Schema> schemas, final int versionKey) {
-        if (versionKey < schemas.firstIntKey()) {
-            // can't have a data type before anything else
-            return schemas.firstIntKey();
-        }
-        return schemas.subMap(0, versionKey + 1).lastIntKey();
-    }
+		return this.modDataFixers().get(finalKey).dataFixer().getSchema(version);
+	}
 
-    protected TypeRewriteRule getRule() {
-        if (version >= newVersion) {
-            return TypeRewriteRule.nop();
-        }
-
-        final long key = (long) version << 32 | newVersion;
-        return rules.computeIfAbsent(key, k -> {
-            final int expandedVersion = getLowestFixSameVersion(DataFixUtils.makeKey(version));
-
-            final List<TypeRewriteRule> rules = Lists.newArrayList();
-            for (final DataFix fix : globalList) {
-                final int expandedFixVersion = fix.getVersionKey();
-                final int fixVersion = DataFixUtils.getVersion(expandedFixVersion);
-                if (expandedFixVersion > expandedVersion && fixVersion <= newVersion) {
-                    final TypeRewriteRule fixRule = fix.getRule();
-                    if (fixRule == TypeRewriteRule.nop()) {
-                        continue;
-                    }
-                    rules.add(fixRule);
-                }
-            }
-
-            return TypeRewriteRule.seq(rules);
-        });
-    }
-
-    protected Map<String, DataFixerUpper> modDataFixers() {
+	protected Map<String, QuiltDataFixesInternals.DataFixerEntry> modDataFixers() {
         return this.modDataFixers;
     }
 }

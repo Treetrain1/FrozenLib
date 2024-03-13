@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.EmptySchema;
+import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.FabricDataFixerUpper;
 
 /**
  * Modified to work on Fabric
@@ -46,7 +47,7 @@ public final class NoOpQuiltDataFixesInternals extends QuiltDataFixesInternals {
     }
 
     @Override
-    public void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull DataFixer dataFixer) {}
+    public void registerFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull FabricDataFixerUpper dataFixer) {}
 
     @Override
     public @Nullable DataFixerEntry getFixerEntry(@NotNull String modId) {
@@ -54,7 +55,7 @@ public final class NoOpQuiltDataFixesInternals extends QuiltDataFixesInternals {
     }
 
 	@Override
-	public void registerMinecraftFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull DataFixer dataFixer) {}
+	public void registerMinecraftFixer(@NotNull String modId, @Range(from = 0, to = Integer.MAX_VALUE) int currentVersion, @NotNull FabricDataFixerUpper dataFixer) {}
 
 	@Override
 	public @Nullable DataFixerEntry getMinecraftFixerEntry(@NotNull String modId) {

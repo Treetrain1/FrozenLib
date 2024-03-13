@@ -70,7 +70,7 @@ public final class QuiltDataFixes {
     public static void registerFixer(
 		@NotNull String modId,
 		@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-		@NotNull DataFixer dataFixer
+		@NotNull FabricDataFixerUpper dataFixer
 	) {
         requireNonNull(modId, "modId cannot be null");
         //noinspection ConstantConditions
@@ -94,7 +94,7 @@ public final class QuiltDataFixes {
     public static void registerFixer(
 		@NotNull ModContainer mod,
 		@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-		@NotNull DataFixer dataFixer
+		@NotNull FabricDataFixerUpper dataFixer
 	) {
         requireNonNull(mod, "mod cannot be null");
 
@@ -127,7 +127,7 @@ public final class QuiltDataFixes {
 	public static void registerMinecraftFixer(
 		@NotNull String modId,
 		@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-		@NotNull DataFixer dataFixer
+		@NotNull FabricDataFixerUpper dataFixer
 	) {
 		requireNonNull(modId, "modId cannot be null");
 		//noinspection ConstantConditions
@@ -151,7 +151,7 @@ public final class QuiltDataFixes {
 	public static void registerMinecraftFixer(
 		@NotNull ModContainer mod,
 		@Range(from = 0, to = Integer.MAX_VALUE) int currentVersion,
-		@NotNull DataFixer dataFixer
+		@NotNull FabricDataFixerUpper dataFixer
 	) {
 		requireNonNull(mod, "mod cannot be null");
 
@@ -180,14 +180,14 @@ public final class QuiltDataFixes {
 	 * @param dataFixerBuilder the data fixer builder
 	 * @return The built data fixer.
 	 */
-	public static DataFixer buildFixer(@NotNull QuiltDataFixerBuilder dataFixerBuilder) {
+	public static FabricDataFixerUpper buildFixer(@NotNull QuiltDataFixerBuilder dataFixerBuilder) {
 		requireNonNull(dataFixerBuilder, "data fixer builder cannot be null");
 
 		Supplier<Executor> executor = () -> Executors.newSingleThreadExecutor(
 			new ThreadFactoryBuilder().setNameFormat("FrozenLib Quilt Datafixer Bootstrap").setDaemon(true).setPriority(1).build()
 		);
 
-		return dataFixerBuilder.build(SharedConstants.DATA_FIX_TYPES_TO_OPTIMIZE, executor);
+		return (FabricDataFixerUpper) dataFixerBuilder.build(SharedConstants.DATA_FIX_TYPES_TO_OPTIMIZE, executor);
 	}
 
     /**
@@ -196,7 +196,7 @@ public final class QuiltDataFixes {
      * @param modId the mod identifier
      * @return the mod's data fixer, or empty if the mod hasn't registered one
      */
-    public static @NotNull Optional<DataFixer> getFixer(@NotNull String modId) {
+    public static @NotNull Optional<FabricDataFixerUpper> getFixer(@NotNull String modId) {
         requireNonNull(modId, "modId cannot be null");
 
         QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.get().getFixerEntry(modId);
@@ -212,7 +212,7 @@ public final class QuiltDataFixes {
 	 * @param modId the mod identifier
 	 * @return the mod's data fixer, or empty if the mod hasn't registered one
 	 */
-	public static @NotNull Optional<DataFixer> getMinecraftFixer(@NotNull String modId) {
+	public static @NotNull Optional<FabricDataFixerUpper> getMinecraftFixer(@NotNull String modId) {
 		requireNonNull(modId, "modId cannot be null");
 
 		QuiltDataFixesInternals.DataFixerEntry entry = QuiltDataFixesInternals.get().getMinecraftFixerEntry(modId);

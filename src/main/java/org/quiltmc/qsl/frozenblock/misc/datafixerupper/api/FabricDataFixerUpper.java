@@ -18,6 +18,21 @@
 
 package org.quiltmc.qsl.frozenblock.misc.datafixerupper.api;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.DataFix;
+import com.mojang.datafixers.DataFixUtils;
+import com.mojang.datafixers.DataFixerUpper;
+import com.mojang.datafixers.TypeRewriteRule;
+import com.mojang.datafixers.schemas.Schema;
+import com.mojang.datafixers.types.Type;
+import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import java.util.List;
+
 public class FabricDataFixerUpper extends DataFixerUpper {
     private final Int2ObjectSortedMap<Schema> schemas;
     private final List<DataFix> globalList;
@@ -40,14 +55,22 @@ public class FabricDataFixerUpper extends DataFixerUpper {
         return getLowestSchemaSameVersion(schemas, versionKey);
     }
 
-    public List<TypeRewriteRule> addRules(List<TypeRewriteRule> list, final int version, final int newVersion) {
+	private int getLowestFixSameVersion(final int versionKey) {
+		if (versionKey < fixerVersions.firstInt()) {
+			// can have a version before everything else
+			return fixerVersions.firstInt() - 1;
+		}
+		return fixerVersions.subSet(0, versionKey + 1).lastInt();
+	}
+
+    public void addRules(List<TypeRewriteRule> list, final int version, final int newVersion) {
         if (version >= newVersion) {
-            return list;
+            return;
         }
 
         final long key = (long) version << 32 | newVersion;
         list.addAll(this.rules.computeIfAbsent(key, k -> {
-            final int expandedVersion = lowestSchemaSameVersion(DataFixUtils.makeKey(version));
+            final int expandedVersion = getLowestFixSameVersion(DataFixUtils.makeKey(version));
 
             final List<TypeRewriteRule> rules = Lists.newArrayList();
             for (final DataFix fix : globalList) {
@@ -64,6 +87,5 @@ public class FabricDataFixerUpper extends DataFixerUpper {
 
             return rules;
         }));
-        return list;
-    }
+	}
 }

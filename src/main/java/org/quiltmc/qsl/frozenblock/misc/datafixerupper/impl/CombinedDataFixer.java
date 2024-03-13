@@ -16,10 +16,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.quiltmc.qsl.frozenblock.misc.datafixerupper.api;
+package org.quiltmc.qsl.frozenblock.misc.datafixerupper.impl;
+
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.schemas.Schema;
+import com.mojang.serialization.Dynamic;
+import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.frozenblock.misc.datafixerupper.api.ModUpgrade;
+import java.util.List;
+import java.util.Map;
 
 public interface CombinedDataFixer {
-    <T> Dynamic<T> update(DSL.TypeReference type, Dynamic<T> input, List<ModUpgrade> versionUpgrades);
+    <T> Dynamic<T> update(DSL.TypeReference type, Dynamic<T> input, final Map<QuiltDataFixesInternals.DataFixerEntry, Integer> versionUpgrades);
 
     default Schema getSchema(String modId, int version) {
         return getSchema(modId, null, version);
