@@ -18,6 +18,7 @@
 
 package net.frozenblock.lib.item.api;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageType;
@@ -43,8 +44,8 @@ public class PrickOnUseBlockItem extends BlockItem {
 
     @Override
 	@NotNull
-    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity user) {
-        if (this.isEdible()) {
+    public ItemStack finishUsingItem(@NotNull ItemStack stack, Level world, LivingEntity user) {
+        if (stack.has(DataComponents.FOOD)) {
             user.hurt(world.damageSources().source(this.damageType),this.damage);
             if (this.hurtSound != null && !user.isSilent()) {
                 user.playSound(this.hurtSound, 0.5F, 0.9F + (world.random.nextFloat() * 0.2F));

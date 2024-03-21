@@ -23,8 +23,10 @@ import java.util.List;
 import net.frozenblock.lib.FrozenLogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -58,11 +60,11 @@ public class LootTableWhacker extends Item {
             if (stack.getHoverName().getString().contains(":")) {
                 String id = stack.getHoverName().getString();
                 List<String> strings = Arrays.stream(id.split(":")).toList();
-                ResourceLocation location = new ResourceLocation(strings.get(0), strings.get(1));
+                ResourceKey<LootTable> location = ResourceKey.create(Registries.LOOT_TABLE, new ResourceLocation(strings.get(0), strings.get(1)));
 				if (!level.isClientSide) {
-					if (level.getServer().getLootData().getLootTable(location) != LootTable.EMPTY) {
+					if (level.getServer().reloadableRegistries().getLootTable(location) != LootTable.EMPTY) {
 						if (level.getBlockEntity(blockPos) instanceof RandomizableContainerBlockEntity loot) {
-							loot.lootTable = location;
+							loot.setLootTable(location);
 							player.displayClientMessage(Component.translatable("frozenlib.loot_table_whacker.success", location.toString()), true);
 							FrozenLogUtils.log(location.toString(), true);
 						}

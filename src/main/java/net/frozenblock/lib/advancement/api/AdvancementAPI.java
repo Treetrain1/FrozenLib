@@ -27,7 +27,11 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
+import org.jetbrains.annotations.NotNull;
 
 public final class AdvancementAPI {
 	private AdvancementAPI() {}
@@ -90,19 +94,24 @@ public final class AdvancementAPI {
 		advancement.requirements().requirements = Collections.unmodifiableList(list);
 	}
 
-	public static void addLootTables(Advancement advancement, List<ResourceLocation> lootTables) {
+	public static void addLootTables(Advancement advancement, @NotNull List<ResourceKey> lootTables) {
 		if (lootTables.isEmpty()) return;
 		setupRewards(advancement);
 		AdvancementRewards rewards = advancement.rewards();
-		List<ResourceLocation> newLoot = new ArrayList<>(rewards.loot);
+		List newLoot = new ArrayList<>(rewards.loot);
 		newLoot.addAll(lootTables);
 		rewards.loot = Collections.unmodifiableList(newLoot);
 	}
 
-	public static void addRecipes(Advancement advancement, List<ResourceLocation> recipes) {
+	public static void addRecipes(@NotNull Advancement advancement, List<ResourceLocation> recipes) {
 		AdvancementRewards rewards = advancement.rewards();
 		List<ResourceLocation> newLoot = new ArrayList<>(rewards.recipes);
 		newLoot.addAll(recipes);
 		rewards.recipes = Collections.unmodifiableList(newLoot);
+	}
+
+	@NotNull
+	public static ResourceKey<LootTable> toLootTableKey(@NotNull ResourceLocation resourceLocation) {
+		return ResourceKey.create(Registries.LOOT_TABLE, resourceLocation);
 	}
 }

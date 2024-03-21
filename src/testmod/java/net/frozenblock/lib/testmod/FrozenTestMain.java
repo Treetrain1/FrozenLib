@@ -78,11 +78,11 @@ public final class FrozenTestMain implements ModInitializer {
 			Advancement advancement = holder.value();
 			switch (holder.id().toString()) {
 				case "minecraft:story/mine_stone" -> {
-					AdvancementAPI.addLootTables(advancement, List.of(new ResourceLocation("archaeology/ocean_ruin_warm")));
+					AdvancementAPI.addLootTables(advancement, List.of(AdvancementAPI.toLootTableKey(new ResourceLocation("archaeology/ocean_ruin_warm"))));
 					advancement.rewards.experience = 100;
 				}
 				case "minecraft:story/upgrade_tools" -> {
-					AdvancementAPI.addLootTables(advancement, List.of(id("test_loottable")));
+					AdvancementAPI.addLootTables(advancement, List.of(AdvancementAPI.toLootTableKey(id("test_loottable"))));
 					AdvancementAPI.addCriteria(
 						advancement,
 						"minecraft:plains",
