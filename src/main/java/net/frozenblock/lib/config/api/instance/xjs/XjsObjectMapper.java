@@ -53,10 +53,10 @@ public class XjsObjectMapper {
 	}
 
 	public static <T> T deserializeObject(final Path p, final Class<T> clazz) throws NonSerializableObjectException {
-		return deserializeObject(null, p, clazz);
+		return deserializeObject(null, null, p, clazz);
 	}
 
-	public static <T> T deserializeObject(final @Nullable String modId, final Path p, final Class<T> clazz) throws NonSerializableObjectException {
+	public static <T> T deserializeObject(final @Nullable String modId, @Nullable CustomTypedEntryFunction func, final Path p, final Class<T> clazz) throws NonSerializableObjectException {
 		final T t = Utils.constructUnsafely(clazz);
 
 		final Optional<JsonObject> read = XjsUtils.readJson(p.toFile());
@@ -64,7 +64,7 @@ public class XjsObjectMapper {
 		final JsonObject json = read.get();
 		if (json.isEmpty()) return t;
 
-		writeObjectInto(modId, t, json);
+		writeObjectInto(modId, func, t, json);
 
 		return t;
 	}
@@ -154,14 +154,14 @@ public class XjsObjectMapper {
 		return json;
 	}
 
-	private static void writeObjectInto(final @Nullable String modId, final Object o, final JsonObject json) throws NonSerializableObjectException {
+	private static void writeObjectInto(final @Nullable String modId, @Nullable CustomTypedEntryFunction func, final Object o, final JsonObject json) throws NonSerializableObjectException {
 		final Class<?> clazz = o.getClass();
 		for (final JsonObject.Member member : json) {
 			final Field f = getField(clazz, member.getKey());
 			if (f == null || !getSaveToggle(f)) continue;
 
 			final Object def = Utils.getUnsafely(f, o);
-			Utils.setUnsafely(f, o, getValueByType(modId, f.getType(), def, member.getValue()));
+			Utils.setUnsafely(f, o, getValueByType(modId, func, f.getType(), def, member.getValue()));
 		}
 	}
 
@@ -175,11 +175,11 @@ public class XjsObjectMapper {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	private static Object getValueByType(final @Nullable String modId, final Class<?> type, final Object def, final JsonValue value) throws NonSerializableObjectException {
+	private static Object getValueByType(final @Nullable String modId, @Nullable CustomTypedEntryFunction func, final Class<?> type, final Object def, final JsonValue value) throws NonSerializableObjectException {
 		if (type.isAssignableFrom(TypedEntry.class)) {
-			return XjsTypedEntrySerializer.fromJsonValue(modId, value);
+			return XjsTypedEntrySerializer.fromJsonValue(modId, func, value);
 		} else if (type.isArray()) {
-			return toArray(modId, type, def, value);
+			return toArray(modId, func, type, def, value);
 		} else if (type.isEnum()) {
 			return assertEnumConstant(value.asString(), (Class) type);
 		} else if (type.isAssignableFrom(String.class)) {
@@ -195,21 +195,21 @@ public class XjsObjectMapper {
 		} else if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class)) {
 			return value.asBoolean();
 		} else if (type.isAssignableFrom(List.class)) {
-			return toList(modId, value, def);
+			return toList(modId, func, value, def);
 		} else if (type.isAssignableFrom(Set.class)) {
-			return new HashSet<>(toList(modId, value, def));
+			return new HashSet<>(toList(modId, func, value, def));
 		} else if (type.equals(Collection.class)) {
-			return toList(modId, value, def);
+			return toList(modId, func, value, def);
 		} else if (type.isAssignableFrom(Map.class)) {
-			return toMap(modId, value, def);
+			return toMap(modId, func, value, def);
 		}
 		final Object o = Utils.constructUnsafely(type);
-		writeObjectInto(modId, o, value.asObject());
+		writeObjectInto(modId, func, o, value.asObject());
 		return o;
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	private static Object toArray(final @Nullable String modId, final Class<?> type, Object def, final JsonValue value) throws NonSerializableObjectException {
+	private static Object toArray(final @Nullable String modId, @Nullable CustomTypedEntryFunction func, final Class<?> type, Object def, final JsonValue value) throws NonSerializableObjectException {
 		final JsonArray json = value.asArray();
 		final Object[] array = new Object[json.size()];
 
@@ -217,12 +217,12 @@ public class XjsObjectMapper {
 		def = defaults != null && defaults.length > 0 ? defaults[0] : null;
 
 		for (int i = 0; i < json.size(); i++) {
-			array[i] = getValueByType(modId, type.getComponentType(), def, json.get(i));
+			array[i] = getValueByType(modId, func, type.getComponentType(), def, json.get(i));
 		}
 		return Arrays.copyOf(array, array.length, (Class) type);
 	}
 
-	private static List<Object> toList(final @Nullable String modId, final JsonValue value, Object def) throws NonSerializableObjectException {
+	private static List<Object> toList(final @Nullable String modId, @Nullable CustomTypedEntryFunction func, final JsonValue value, Object def) throws NonSerializableObjectException {
 		final Collection<?> defaults = (Collection<?>) def;
 		def = defaults != null && !defaults.isEmpty() ? defaults.iterator().next() : null;
 
@@ -230,12 +230,12 @@ public class XjsObjectMapper {
 
 		final List<Object> list = new ArrayList<>();
 		for (final JsonValue v : value.asArray()) {
-			list.add(getValueByType(modId, def.getClass(), def, v));
+			list.add(getValueByType(modId, func, def.getClass(), def, v));
 		}
 		return list;
 	}
 
-	private static Map<String, Object> toMap(final @Nullable String modId, final JsonValue value, Object def) throws NonSerializableObjectException {
+	private static Map<String, Object> toMap(final @Nullable String modId, @Nullable CustomTypedEntryFunction func, final JsonValue value, Object def) throws NonSerializableObjectException {
 		final Map<String, Object> map = new HashMap<>();
 
 		final Map<?, ?> defaults = (Map<?, ?>) def;
@@ -244,7 +244,7 @@ public class XjsObjectMapper {
 		if (def == null) throw NonSerializableObjectException.defaultRequired();
 
 		for (final JsonObject.Member member : value.asObject()) {
-			map.put(member.getKey(), getValueByType(modId, def.getClass(), def, member.getValue()));
+			map.put(member.getKey(), getValueByType(modId, func, def.getClass(), def, member.getValue()));
 		}
 		return map;
 	}

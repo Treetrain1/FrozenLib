@@ -53,8 +53,8 @@ public final class XjsTypedEntrySerializer {
         throw new NonSerializableObjectException("Failed to serialize typed entry " + src);
     }
 
-    public static TypedEntry<?> fromJsonValue(final String modId, final JsonValue value) throws NonSerializableObjectException {
-        TypedEntry<?> modEntry = getFromRegistry(modId, value, ConfigRegistry.getTypedEntryTypesForMod(modId));
+    public static TypedEntry<?> fromJsonValue(final String modId, @Nullable CustomTypedEntryFunction func, final JsonValue value) throws NonSerializableObjectException {
+        TypedEntry<?> modEntry = getFromRegistry(modId, func, value, ConfigRegistry.getTypedEntryTypesForMod(modId));
         if (modEntry != null) {
             return modEntry;
         }
@@ -63,10 +63,10 @@ public final class XjsTypedEntrySerializer {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    private static <T> TypedEntry<T> getFromRegistry(final String modId, final JsonValue value, final @NotNull Collection<TypedEntryType<?>> registry) throws ClassCastException {
+    private static <T> TypedEntry<T> getFromRegistry(final String modId, @Nullable CustomTypedEntryFunction func, final JsonValue value, final @NotNull Collection<TypedEntryType<?>> registry) throws ClassCastException {
         for (TypedEntryType<?> entryType : registry) {
             TypedEntryType<T> newType = (TypedEntryType<T>) entryType;
-            TypedEntry<T> entry = getFromType(modId, value, newType);
+            TypedEntry<T> entry = getFromType(modId, func, value, newType);
             if (entry != null) {
                 return entry;
             }
@@ -75,7 +75,7 @@ public final class XjsTypedEntrySerializer {
     }
 
     @Nullable
-    private static <T> TypedEntry<T> getFromType(String modId, JsonValue value, @NotNull TypedEntryType<T> entryType) throws ClassCastException {
+    private static <T> TypedEntry<T> getFromType(String modId, @Nullable CustomTypedEntryFunction func, JsonValue value, @NotNull TypedEntryType<T> entryType) throws ClassCastException {
         if (!entryType.modId().equals(modId))
             return null;
 
@@ -89,7 +89,10 @@ public final class XjsTypedEntrySerializer {
 
         Pair<T, JsonValue> pair = optional.get();
         T first = pair.getFirst();
-        TypedEntry<T> entry = TypedEntry.create(entryType, first);
+
+        if (func == null)
+            func = CustomTypedEntryFunction.DEFAULT;
+        TypedEntry<T> entry = func.createTypedEntry(entryType, first);
         FrozenLogUtils.log("Built typed entry " + entry, FrozenSharedConstants.UNSTABLE_LOGGING);
         return entry;
     }

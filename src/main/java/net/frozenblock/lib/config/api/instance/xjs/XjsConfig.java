@@ -62,7 +62,7 @@ public class XjsConfig<T> extends Config<T> {
 	}
 
 	@Override
-	public void onSave() throws Exception {
+	protected void onSave() throws Exception {
 		Files.createDirectories(this.path().getParent());
 		JsonValue value = XjsObjectMapper.toJsonObject(this.instance());
 		try (
@@ -73,9 +73,9 @@ public class XjsConfig<T> extends Config<T> {
 	}
 
 	@Override
-	public boolean onLoad() throws Exception {
+	protected boolean onLoad() throws Exception {
 		if (Files.exists(this.path())) {
-			this.setConfig(XjsObjectMapper.deserializeObject(this.modId(), this.path(), this.configClass()));
+			this.setConfig(XjsObjectMapper.deserializeObject(this.modId(), CustomTypedEntryFunction.DEFAULT, this.path(), this.configClass()));
 		}
 		return true;
 	}

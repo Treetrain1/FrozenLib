@@ -69,7 +69,7 @@ public class JsonConfig<T> extends Config<T> {
 	}
 
 	@Override
-	public void onSave() throws Exception {
+	protected void onSave() throws Exception {
 		Files.createDirectories(this.path().getParent());
 		try (BufferedWriter writer = Files.newBufferedWriter(this.path(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			writer.write(this.jankson.toJson(this.instance()).toJson(this.type.getGrammar()));
@@ -77,7 +77,7 @@ public class JsonConfig<T> extends Config<T> {
 	}
 
 	@Override
-	public boolean onLoad() throws Exception {
+	protected boolean onLoad() throws Exception {
 		if (Files.exists(this.path())) {
 			this.setConfig(this.jankson.fromJson(this.jankson.load(this.path().toFile()), this.configClass()));
 		}
