@@ -25,8 +25,10 @@ import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelWriter;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
@@ -41,11 +43,10 @@ public abstract class SaveableConfiguredFeature<FC extends FeatureConfiguration>
 		if (this.ensureCanWrite(world, pos)) {
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		} else {
+			StructureManager
 			featuremanager.addfeaturereference()grhjdbk
 		}
 	}
-
-	private void
 
 	private boolean ensureCanWrite(LevelWriter world, BlockPos pos) {
 		if (world instanceof WorldGenRegion worldGenRegion) {
