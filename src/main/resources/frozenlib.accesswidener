@@ -51,6 +51,10 @@ transitive-accessible    method    net/minecraft/world/level/levelgen/feature/tr
 transitive-accessible    method    net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacerType    <init>    (Lcom/mojang/serialization/MapCodec;)V
 transitive-accessible    method    net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacerType    <init>    (Lcom/mojang/serialization/MapCodec;)V
 
+# Worldgen Region
+transitive-accessible field net/minecraft/server/level/WorldGenRegion generatingStep Lnet/minecraft/world/level/chunk/status/ChunkStep;
+transitive-accessible field net/minecraft/server/level/WorldGenRegion center Lnet/minecraft/world/level/chunk/ChunkAccess;
+
 # Items
 transitive-extendable    method    net/minecraft/world/item/InstrumentItem    getInstrument    (Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;
 transitive-extendable    method    net/minecraft/world/level/block/state/BlockBehaviour    getLootTable    ()Lnet/minecraft/resources/ResourceKey;
