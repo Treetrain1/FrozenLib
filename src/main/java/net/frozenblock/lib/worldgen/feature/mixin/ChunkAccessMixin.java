@@ -20,56 +20,83 @@ package net.frozenblock.lib.worldgen.feature.mixin;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.frozenblock.lib.worldgen.feature.impl.saved.ChunkAccessFeatureInterface;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureAccess;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureStart;
+import net.frozenblock.lib.worldgen.feature.impl.saved.SavedFeature;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import java.util.Collections;
 import java.util.Map;
 
 @Mixin(ChunkAccess.class)
-public class ChunkAccessMixin implements FeatureAccess {
+public class ChunkAccessMixin implements FeatureAccess, ChunkAccessFeatureInterface {
+	@Final
+	@Shadow
+	private static LongSet EMPTY_REFERENCE_SET;
 
 	@Shadow
 	protected volatile boolean unsaved;
 	@Unique
-	private final Map<ConfiguredFeature<?, ?>, FeatureStart> featureStarts = Maps.<ConfiguredFeature<?, ?>, FeatureStart>newHashMap();
+	private final Map<SavedFeature, FeatureStart> featureStarts = Maps.newHashMap();
 	@Unique
-	private final Map<ConfiguredFeature<?, ?>, LongSet> featureRefences = Maps.<ConfiguredFeature<?, ?>, LongSet>newHashMap();
+	private final Map<SavedFeature, LongSet> featureRefences = Maps.newHashMap();
 
+	@Unique
 	@Override
-	public @Nullable StructureStart getStartForStructure(Structure structure) {
-		return null;
+	public @Nullable FeatureStart getStartForFeature(SavedFeature feature) {
+		return this.featureStarts.get(feature);
 	}
 
+	@Unique
 	@Override
-	public void setStartForStructure(Structure structure, StructureStart start) {
-
-	}
-
-	@Override
-	public LongSet getReferencesForStructure(Structure structure) {
-		return null;
-	}
-
-	@Override
-	public void addReferenceForFeature(ConfiguredFeature<?, ?> configuredFeature, long reference) {
-		this.featureRefences.computeIfAbsent(configuredFeature, key -> new LongOpenHashSet()).add(reference);
+	public void setStartForFeature(SavedFeature structure, FeatureStart start) {
+		this.featureStarts.put(structure, start);
 		this.unsaved = true;
 	}
 
+	@Unique
 	@Override
-	public Map<Structure, LongSet> getAllReferences() {
-		return Map.of();
+	public LongSet getReferencesForFeature(SavedFeature feature) {
+		return this.featureRefences.getOrDefault(feature, EMPTY_REFERENCE_SET);
 	}
 
+	@Unique
 	@Override
-	public void setAllReferences(Map<Structure, LongSet> structureReferences) {
+	public void addReferenceForFeature(SavedFeature feature, long reference) {
+		this.featureRefences.computeIfAbsent(feature, key -> new LongOpenHashSet()).add(reference);
+		this.unsaved = true;
+	}
 
+	@Unique
+	@Override
+	public Map<SavedFeature, LongSet> getAllReferences() {
+		return Collections.unmodifiableMap(this.featureRefences);
+	}
+
+	@Unique
+	@Override
+	public void setAllReferences(Map<SavedFeature, LongSet> map) {
+		this.featureRefences.clear();
+		this.featureRefences.putAll(map);
+		this.unsaved = true;
+	}
+
+	@Unique
+	@Override
+	public Map<SavedFeature, FeatureStart> getAllStarts() {
+		return Collections.unmodifiableMap(this.featureStarts);
+	}
+
+	@Unique
+	@Override
+	public void setAllStarts(Map<SavedFeature, FeatureStart> map) {
+		this.featureStarts.clear();
+		this.featureStarts.putAll(map);
+		this.unsaved = true;
 	}
 }

@@ -26,15 +26,15 @@ import java.util.Map;
 
 public interface FeatureAccess {
 	@Nullable
-	StructureStart getStartForStructure(Structure structure);
+	FeatureStart getStartForFeature(SavedFeature savedFeature);
 
-	void setStartForStructure(Structure structure, StructureStart start);
+	void setStartForFeature(SavedFeature savedFeature, FeatureStart start);
 
-	LongSet getReferencesForStructure(Structure structure);
+	LongSet getReferencesForFeature(SavedFeature savedFeature);
 
-	void addReferenceForFeature(ConfiguredFeature<?, ?> configuredFeature, long reference);
+	void addReferenceForFeature(SavedFeature savedFeature, long reference);
 
-	Map<Structure, LongSet> getAllReferences();
+	Map<SavedFeature, LongSet> getAllReferences();
 
-	void setAllReferences(Map<Structure, LongSet> structureReferences);
+	void setAllReferences(Map<SavedFeature, LongSet> map);
 }

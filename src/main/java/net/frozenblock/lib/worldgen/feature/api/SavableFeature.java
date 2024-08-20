@@ -47,7 +47,7 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		} else {
 			if (world instanceof ServerLevel level) {
-				FeatureManager manager = ((ServerLevelInterface) level).frozenLib$featureManager();
+				FeatureManager featureManager = ((ServerLevelInterface) level).frozenLib$featureManager();
 				// TODO: do whatever
 			}
 		}
