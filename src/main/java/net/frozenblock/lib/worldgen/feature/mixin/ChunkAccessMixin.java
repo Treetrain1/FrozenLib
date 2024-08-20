@@ -41,62 +41,67 @@ public class ChunkAccessMixin implements FeatureAccess, ChunkAccessFeatureInterf
 
 	@Shadow
 	protected volatile boolean unsaved;
+	@Final
 	@Unique
-	private final Map<SavedFeature, FeatureStart> featureStarts = Maps.newHashMap();
+	private final Map<SavedFeature, FeatureStart> frozenLib$featureStarts = Maps.newHashMap();
+	@Final
 	@Unique
-	private final Map<SavedFeature, LongSet> featureRefences = Maps.newHashMap();
+	private final Map<SavedFeature, LongSet> frozenLib$featureRefences = Maps.newHashMap();
 
 	@Unique
 	@Override
-	public @Nullable FeatureStart getStartForFeature(SavedFeature feature) {
-		return this.featureStarts.get(feature);
+	public @Nullable FeatureStart frozenLib$getStartForFeature(SavedFeature feature) {
+		return this.frozenLib$featureStarts.get(feature);
 	}
 
 	@Unique
 	@Override
-	public void setStartForFeature(SavedFeature structure, FeatureStart start) {
-		this.featureStarts.put(structure, start);
+	public void frozenLib$setStartForFeature(SavedFeature structure, FeatureStart start) {
+		this.frozenLib$featureStarts.put(structure, start);
 		this.unsaved = true;
 	}
 
 	@Unique
 	@Override
-	public LongSet getReferencesForFeature(SavedFeature feature) {
-		return this.featureRefences.getOrDefault(feature, EMPTY_REFERENCE_SET);
+	public LongSet frozenLib$getReferencesForFeature(SavedFeature feature) {
+		return this.frozenLib$featureRefences.getOrDefault(feature, EMPTY_REFERENCE_SET);
 	}
 
 	@Unique
 	@Override
-	public void addReferenceForFeature(SavedFeature feature, long reference) {
-		this.featureRefences.computeIfAbsent(feature, key -> new LongOpenHashSet()).add(reference);
+	public void frozenLib$addReferenceForFeature(SavedFeature feature, long reference) {
+		LongSet references = this.frozenLib$featureRefences.computeIfAbsent(feature, key -> new LongOpenHashSet());
+		if (!references.contains(reference)) {
+			references.add(reference);
+		}
 		this.unsaved = true;
 	}
 
 	@Unique
 	@Override
-	public Map<SavedFeature, LongSet> getAllReferences() {
-		return Collections.unmodifiableMap(this.featureRefences);
+	public Map<SavedFeature, LongSet> frozenLib$getAllReferences() {
+		return Collections.unmodifiableMap(this.frozenLib$featureRefences);
 	}
 
 	@Unique
 	@Override
-	public void setAllReferences(Map<SavedFeature, LongSet> map) {
-		this.featureRefences.clear();
-		this.featureRefences.putAll(map);
+	public void frozenLib$setAllReferences(Map<SavedFeature, LongSet> map) {
+		this.frozenLib$featureRefences.clear();
+		this.frozenLib$featureRefences.putAll(map);
 		this.unsaved = true;
 	}
 
 	@Unique
 	@Override
-	public Map<SavedFeature, FeatureStart> getAllStarts() {
-		return Collections.unmodifiableMap(this.featureStarts);
+	public Map<SavedFeature, FeatureStart> frozenLib$getAllStarts() {
+		return Collections.unmodifiableMap(this.frozenLib$featureStarts);
 	}
 
 	@Unique
 	@Override
-	public void setAllStarts(Map<SavedFeature, FeatureStart> map) {
-		this.featureStarts.clear();
-		this.featureStarts.putAll(map);
+	public void frozenLib$setAllStarts(Map<SavedFeature, FeatureStart> map) {
+		this.frozenLib$featureStarts.clear();
+		this.frozenLib$featureStarts.putAll(map);
 		this.unsaved = true;
 	}
 }

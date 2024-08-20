@@ -54,8 +54,8 @@ public class ChunkGeneratorMixin implements ChunkGeneratorSavableFeatureInterfac
 		method = "applyBiomeDecoration",
 		at = @At(
 			value = "JUMP",
-		//	opcode = Opcodes.IF_ICMPGE,
-			opcode = Opcodes.IF_ICMPLT,
+			opcode = Opcodes.IF_ICMPGE,
+		//	opcode = Opcodes.IF_ICMPLT,
 			ordinal = 0
 		)
 	)
@@ -76,34 +76,7 @@ public class ChunkGeneratorMixin implements ChunkGeneratorSavableFeatureInterfac
 	@Unique
 	@Override
 	public void frozenLib$createReferences(WorldGenLevel worldGenLevel, FeatureManager featureManager, @NotNull ChunkAccess chunkAccess) {
-		int range = 8;
-		ChunkPos chunkPos = chunkAccess.getPos();
-		int j = chunkPos.x;
-		int k = chunkPos.z;
-		SectionPos sectionPos = SectionPos.bottomOf(chunkAccess);
 
-		for (int n = j - range; n <= j + range; n++) {
-			for (int o = k - range; o <= k + range; o++) {
-				long p = ChunkPos.asLong(n, o);
-
-				for (FeatureStart featureStart : ((ChunkAccessFeatureInterface)worldGenLevel.getChunk(n, o)).getAllStarts().values()) {
-					try {
-						if (featureStart.getChunkPos().equals(chunkPos)) {
-							featureManager.addReferenceForFeature(sectionPos, featureStart.getFeature(), p, (FeatureAccess) chunkAccess);
-						}
-					} catch (Exception var21) {
-						CrashReport crashReport = CrashReport.forThrowable(var21, "Generating feature reference");
-						CrashReportCategory crashReportCategory = crashReport.addCategory("FrozenLib - Savable Feature");
-						Optional<? extends Registry<ConfiguredFeature<?, ?>>> optional = worldGenLevel.registryAccess().registry(Registries.CONFIGURED_FEATURE);
-						crashReportCategory.setDetail(
-							"Id", () -> optional.map(registry -> registry.getKey(featureStart.getFeature().configuredFeature()).toString()).orElse("UNKNOWN")
-						);
-						crashReportCategory.setDetail("Class", () -> featureStart.getFeature().getClass().getCanonicalName());
-						throw new ReportedException(crashReport);
-					}
-				}
-			}
-		}
 	}
 
 	@Unique

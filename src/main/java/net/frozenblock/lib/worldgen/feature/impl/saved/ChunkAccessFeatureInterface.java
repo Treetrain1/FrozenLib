@@ -20,7 +20,7 @@ package net.frozenblock.lib.worldgen.feature.impl.saved;
 import java.util.Map;
 
 public interface ChunkAccessFeatureInterface {
-	Map<SavedFeature, FeatureStart> getAllStarts();
+	Map<SavedFeature, FeatureStart> frozenLib$getAllStarts();
 
-	void setAllStarts(Map<SavedFeature, FeatureStart> map);
+	void frozenLib$setAllStarts(Map<SavedFeature, FeatureStart> map);
 }

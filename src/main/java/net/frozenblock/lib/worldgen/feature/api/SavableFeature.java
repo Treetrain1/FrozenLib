@@ -27,41 +27,50 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelWriter;
-import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class SavableFeature<FC extends FeatureConfiguration> extends Feature<FC> {
-	private FC featureConfiguration;
-	private BlockPos origin;
-	private long seed;
-
 	public SavableFeature(Codec<FC> configCodec) {
 		super(configCodec);
 	}
 
-	@Override
-	public boolean place(FC featureConfiguration, WorldGenLevel worldGenLevel, ChunkGenerator chunkGenerator, RandomSource randomSource, BlockPos blockPos) {
-		this.featureConfiguration = featureConfiguration;
-		this.origin = blockPos;
-		if (randomSource instanceof WorldgenRandomSeedInterface worldgenRandom) {
-			this.seed = worldgenRandom.frozenLib$getSeed();
+	@Contract("_ -> new")
+	protected final @NotNull SavedFeature createSavedFeature(@NotNull FeaturePlaceContext<FC> featurePlaceContext) {
+		long seed = featurePlaceContext.random().nextLong();
+		if (featurePlaceContext.random() instanceof WorldgenRandomSeedInterface worldgenRandom) {
+			seed = worldgenRandom.frozenLib$getSeed();
 		}
-		return super.place(featureConfiguration, worldGenLevel, chunkGenerator, randomSource, blockPos);
+		return new SavedFeature(
+			featurePlaceContext.origin(),
+			new ConfiguredFeature<>(
+				this,
+				featurePlaceContext.config()
+			),
+			seed
+		);
 	}
 
 	@Override
-	protected void setBlock(LevelWriter world, BlockPos pos, BlockState state) {
-		if (this.ensureCanWrite(world, pos)) {
+	public final boolean place(FeaturePlaceContext<FC> featurePlaceContext) {
+		SavedFeature savedFeature = createSavedFeature(featurePlaceContext);
+		return this.place(featurePlaceContext, savedFeature);
+	}
+
+	public abstract boolean place(FeaturePlaceContext<FC> featurePlaceContext, SavedFeature savedFeature);
+
+	protected void safeSetBlock(LevelWriter world, BlockPos pos, BlockState state, SavedFeature savedFeature) {
+		if (ensureCanWrite(world, pos)) {
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		} else {
 			if (world instanceof ServerLevel level) {
@@ -69,23 +78,15 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 				ChunkPos chunkPos = new ChunkPos(pos);
 				featureManager.addReferenceForFeature(
 					SectionPos.of(pos),
-					new SavedFeature(
-						this.origin,
-						new ConfiguredFeature<>(
-							this,
-							this.featureConfiguration
-						),
-						this.seed
-					),
+					savedFeature,
 					chunkPos.toLong(),
 					(FeatureAccess)level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.FEATURES)
 				);
-				// TODO: do whatever
 			}
 		}
 	}
 
-	private boolean ensureCanWrite(LevelWriter world, BlockPos pos) {
+	private static boolean ensureCanWrite(LevelWriter world, BlockPos pos) {
 		if (world instanceof WorldGenRegion worldGenRegion) {
 			int i = SectionPos.blockToSectionCoord(pos.getX());
 			int j = SectionPos.blockToSectionCoord(pos.getZ());

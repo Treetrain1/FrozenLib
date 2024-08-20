@@ -40,45 +40,45 @@ public class ImposterProtoChunkMixin implements FeatureAccess, ChunkAccessFeatur
 	@Unique
 	@Nullable
 	@Override
-	public FeatureStart getStartForFeature(SavedFeature feature) {
-		return ((FeatureAccess)this.wrapped).getStartForFeature(feature);
+	public FeatureStart frozenLib$getStartForFeature(SavedFeature feature) {
+		return ((FeatureAccess)this.wrapped).frozenLib$getStartForFeature(feature);
 	}
 
 	@Unique
 	@Override
-	public void setStartForFeature(SavedFeature feature, FeatureStart structureStart) {
+	public void frozenLib$setStartForFeature(SavedFeature feature, FeatureStart structureStart) {
 	}
 
 	@Unique
 	@Override
-	public Map<SavedFeature, FeatureStart> getAllStarts() {
-		return ((ChunkAccessFeatureInterface)this.wrapped).getAllStarts();
+	public Map<SavedFeature, FeatureStart> frozenLib$getAllStarts() {
+		return ((ChunkAccessFeatureInterface)this.wrapped).frozenLib$getAllStarts();
 	}
 
 	@Unique
 	@Override
-	public void setAllStarts(Map<SavedFeature, FeatureStart> map) {
+	public void frozenLib$setAllStarts(Map<SavedFeature, FeatureStart> map) {
 	}
 
 	@Unique
 	@Override
-	public LongSet getReferencesForFeature(SavedFeature feature) {
-		return ((FeatureAccess)this.wrapped).getReferencesForFeature(feature);
+	public LongSet frozenLib$getReferencesForFeature(SavedFeature feature) {
+		return ((FeatureAccess)this.wrapped).frozenLib$getReferencesForFeature(feature);
 	}
 
 	@Unique
 	@Override
-	public void addReferenceForFeature(SavedFeature feature, long l) {
+	public void frozenLib$addReferenceForFeature(SavedFeature feature, long l) {
 	}
 
 	@Unique
 	@Override
-	public Map<SavedFeature, LongSet> getAllReferences() {
-		return ((FeatureAccess)this.wrapped).getAllReferences();
+	public Map<SavedFeature, LongSet> frozenLib$getAllReferences() {
+		return ((FeatureAccess)this.wrapped).frozenLib$getAllReferences();
 	}
 
 	@Unique
 	@Override
-	public void setAllReferences(Map<SavedFeature, LongSet> map) {
+	public void frozenLib$setAllReferences(Map<SavedFeature, LongSet> map) {
 	}
 }

@@ -23,15 +23,15 @@ import org.jetbrains.annotations.Nullable;
 
 public interface FeatureAccess {
 	@Nullable
-	FeatureStart getStartForFeature(SavedFeature savedFeature);
+	FeatureStart frozenLib$getStartForFeature(SavedFeature savedFeature);
 
-	void setStartForFeature(SavedFeature savedFeature, FeatureStart start);
+	void frozenLib$setStartForFeature(SavedFeature savedFeature, FeatureStart start);
 
-	LongSet getReferencesForFeature(SavedFeature savedFeature);
+	LongSet frozenLib$getReferencesForFeature(SavedFeature savedFeature);
 
-	void addReferenceForFeature(SavedFeature savedFeature, long reference);
+	void frozenLib$addReferenceForFeature(SavedFeature savedFeature, long reference);
 
-	Map<SavedFeature, LongSet> getAllReferences();
+	Map<SavedFeature, LongSet> frozenLib$getAllReferences();
 
-	void setAllReferences(Map<SavedFeature, LongSet> map);
+	void frozenLib$setAllReferences(Map<SavedFeature, LongSet> map);
 }

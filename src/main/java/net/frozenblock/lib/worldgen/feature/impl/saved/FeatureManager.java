@@ -46,14 +46,14 @@ public class FeatureManager {
 	}
 
 	public List<FeatureStart> getAllStarts(@NotNull SectionPos sectionPos) {
-		Map<SavedFeature, LongSet> references = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)).getAllReferences();
+		Map<SavedFeature, LongSet> references = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)).frozenLib$getAllReferences();
 		ImmutableList.Builder<FeatureStart> builder = ImmutableList.builder();
 		references.forEach((feature, longSet) -> this.fillStartsForFeature(feature, longSet, builder::add));
 		return builder.build();
 	}
 
 	public List<FeatureStart> startsForFeature(@NotNull SectionPos sectionPos, SavedFeature feature) {
-		LongSet longSet = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)).getReferencesForFeature(feature);
+		LongSet longSet = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)).frozenLib$getReferencesForFeature(feature);
 		ImmutableList.Builder<FeatureStart> builder = ImmutableList.builder();
 		this.fillStartsForFeature(feature, longSet, builder::add);
 		return builder.build();
@@ -73,14 +73,14 @@ public class FeatureManager {
 
 	@Nullable
 	public FeatureStart getStartForFeature(SectionPos sectionPos, SavedFeature feature, @NotNull FeatureAccess featureAccess) {
-		return featureAccess.getStartForFeature(feature);
+		return featureAccess.frozenLib$getStartForFeature(feature);
 	}
 
 	public void setStartForStructure(SectionPos sectionPos, SavedFeature feature, FeatureStart featureStart, @NotNull FeatureAccess featureAccess) {
-		featureAccess.setStartForFeature(feature, featureStart);
+		featureAccess.frozenLib$setStartForFeature(feature, featureStart);
 	}
 
 	public void addReferenceForFeature(SectionPos sectionPos, SavedFeature feature, long l, @NotNull FeatureAccess featureAccess) {
-		featureAccess.addReferenceForFeature(feature, l);
+		featureAccess.frozenLib$addReferenceForFeature(feature, l);
 	}
 }
