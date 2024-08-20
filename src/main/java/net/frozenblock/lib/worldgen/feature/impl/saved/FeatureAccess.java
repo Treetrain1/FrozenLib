@@ -22,11 +22,6 @@ import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 public interface FeatureAccess {
-	@Nullable
-	FeatureStart frozenLib$getStartForFeature(SavedFeature savedFeature);
-
-	void frozenLib$setStartForFeature(SavedFeature savedFeature, FeatureStart start);
-
 	LongSet frozenLib$getReferencesForFeature(SavedFeature savedFeature);
 
 	void frozenLib$addReferenceForFeature(SavedFeature savedFeature, long reference);

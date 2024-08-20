@@ -89,7 +89,6 @@ public class FeatureStart {
 		);
 		((SavableFeature)this.feature.configuredFeature().feature())
 			.place(featurePlaceContext, this.feature);
-		System.out.println("PLACED");
 	}
 
 	public CompoundTag createTag(@NotNull ChunkPos chunkPos) {

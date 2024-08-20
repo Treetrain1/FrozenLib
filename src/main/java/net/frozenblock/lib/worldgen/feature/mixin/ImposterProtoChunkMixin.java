@@ -19,46 +19,20 @@ package net.frozenblock.lib.worldgen.feature.mixin;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Map;
-import net.frozenblock.lib.worldgen.feature.impl.saved.ChunkAccessFeatureInterface;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureAccess;
-import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureStart;
 import net.frozenblock.lib.worldgen.feature.impl.saved.SavedFeature;
 import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ImposterProtoChunk.class)
-public class ImposterProtoChunkMixin implements FeatureAccess, ChunkAccessFeatureInterface {
+public class ImposterProtoChunkMixin implements FeatureAccess {
 	@Shadow
 	@Final
 	private LevelChunk wrapped;
-
-	@Unique
-	@Nullable
-	@Override
-	public FeatureStart frozenLib$getStartForFeature(SavedFeature feature) {
-		return ((FeatureAccess)this.wrapped).frozenLib$getStartForFeature(feature);
-	}
-
-	@Unique
-	@Override
-	public void frozenLib$setStartForFeature(SavedFeature feature, FeatureStart structureStart) {
-	}
-
-	@Unique
-	@Override
-	public Map<SavedFeature, FeatureStart> frozenLib$getAllStarts() {
-		return ((ChunkAccessFeatureInterface)this.wrapped).frozenLib$getAllStarts();
-	}
-
-	@Unique
-	@Override
-	public void frozenLib$setAllStarts(Map<SavedFeature, FeatureStart> map) {
-	}
 
 	@Unique
 	@Override

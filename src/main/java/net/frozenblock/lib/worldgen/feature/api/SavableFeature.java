@@ -20,7 +20,6 @@ package net.frozenblock.lib.worldgen.feature.api;
 import com.mojang.serialization.Codec;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureAccess;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureManager;
-import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureStart;
 import net.frozenblock.lib.worldgen.feature.impl.saved.SavedFeature;
 import net.frozenblock.lib.worldgen.feature.impl.saved.ServerLevelFeatureManagerInterface;
 import net.frozenblock.lib.worldgen.feature.impl.saved.WorldgenRandomSeedInterface;
@@ -65,20 +64,6 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 	@Override
 	public final boolean place(FeaturePlaceContext<FC> featurePlaceContext) {
 		SavedFeature savedFeature = createSavedFeature(featurePlaceContext);
-		if (featurePlaceContext.level() instanceof WorldGenRegion worldGenRegion) {
-			ServerLevel serverLevel = worldGenRegion.level;
-			FeatureManager featureManager = ((ServerLevelFeatureManagerInterface) serverLevel).frozenLib$featureManager();
-			ChunkPos chunkPos = new ChunkPos(featurePlaceContext.origin());
-			featureManager.setStartForFeature(
-				SectionPos.of(featurePlaceContext.origin()),
-				savedFeature,
-				new FeatureStart(
-					savedFeature,
-					chunkPos
-				),
-				(FeatureAccess)serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
-			);
-		}
 		return this.place(featurePlaceContext, savedFeature);
 	}
 

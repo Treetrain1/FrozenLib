@@ -28,7 +28,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class FeatureManager {
 	private final LevelAccessor level;
@@ -58,15 +57,6 @@ public class FeatureManager {
 			FeatureStart featureStart = new FeatureStart(feature, new ChunkPos(sectionPos.x(), sectionPos.z()));
 			consumer.accept(featureStart);
 		}
-	}
-
-	@Nullable
-	public FeatureStart getStartForFeature(SectionPos sectionPos, SavedFeature feature, @NotNull FeatureAccess featureAccess) {
-		return featureAccess.frozenLib$getStartForFeature(feature);
-	}
-
-	public void setStartForFeature(SectionPos sectionPos, SavedFeature feature, FeatureStart featureStart, @NotNull FeatureAccess featureAccess) {
-		featureAccess.frozenLib$setStartForFeature(feature, featureStart);
 	}
 
 	public void addReferenceForFeature(SectionPos sectionPos, SavedFeature feature, long l, @NotNull FeatureAccess featureAccess) {
