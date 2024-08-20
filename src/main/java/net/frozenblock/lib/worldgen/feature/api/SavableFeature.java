@@ -32,13 +32,16 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SavableFeature<FC extends FeatureConfiguration> extends Feature<FC> {
 	public SavableFeature(Codec<FC> configCodec) {
@@ -64,14 +67,26 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 	@Override
 	public final boolean place(FeaturePlaceContext<FC> featurePlaceContext) {
 		SavedFeature savedFeature = createSavedFeature(featurePlaceContext);
-		return this.place(featurePlaceContext, savedFeature);
+		return this.place(featurePlaceContext, savedFeature, null);
 	}
 
-	public abstract boolean place(FeaturePlaceContext<FC> featurePlaceContext, SavedFeature savedFeature);
+	public abstract boolean place(FeaturePlaceContext<FC> featurePlaceContext, SavedFeature savedFeature, @Nullable BoundingBox boundingBox);
 
-	protected void safeSetBlock(LevelWriter world, BlockPos pos, BlockState state, SavedFeature savedFeature) {
+	public static @NotNull BoundingBox getWritableArea(@NotNull ChunkAccess chunkAccess) {
+		ChunkPos chunkPos = chunkAccess.getPos();
+		int i = chunkPos.getMinBlockX();
+		int j = chunkPos.getMinBlockZ();
+		LevelHeightAccessor levelHeightAccessor = chunkAccess.getHeightAccessorForGeneration();
+		int k = levelHeightAccessor.getMinBuildHeight() + 1;
+		int l = levelHeightAccessor.getMaxBuildHeight() - 1;
+		return new BoundingBox(i, k, j, i + 15, l, j + 15);
+	}
+
+	protected void safeSetBlock(LevelWriter world, BlockPos pos, BlockState state, SavedFeature savedFeature, @Nullable BoundingBox boundingBox) {
 		if (ensureCanWrite(world, pos)) {
-			world.setBlock(pos, state, Block.UPDATE_ALL);
+			if (boundingBox == null || boundingBox.isInside(pos)) {
+				world.setBlock(pos, state, Block.UPDATE_ALL);
+			}
 		} else {
 			if (world instanceof WorldGenRegion worldGenRegion) {
 				ServerLevel serverLevel = worldGenRegion.level;

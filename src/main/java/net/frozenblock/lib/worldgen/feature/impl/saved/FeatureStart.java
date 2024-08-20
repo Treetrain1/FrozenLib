@@ -30,6 +30,7 @@ import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -75,11 +76,11 @@ public class FeatureStart {
 	public void placeInChunk(
 		WorldGenLevel worldGenLevel,
 		ChunkGenerator chunkGenerator,
-		ChunkPos chunkPos
+		@NotNull ChunkPos chunkPos
 	) {
 		WorldgenRandom worldgenRandom = new WorldgenRandom(new XoroshiroRandomSource(RandomSupport.generateUniqueSeed()));
 		worldgenRandom.setSeed(this.feature.seed());
-		FeaturePlaceContext<?> featurePlaceContext = new FeaturePlaceContext<net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration>(
+		FeaturePlaceContext<?> featurePlaceContext = new FeaturePlaceContext<FeatureConfiguration>(
 			Optional.empty(),
 			worldGenLevel,
 			chunkGenerator,
@@ -88,7 +89,7 @@ public class FeatureStart {
 			this.feature.configuredFeature().config()
 		);
 		((SavableFeature)this.feature.configuredFeature().feature())
-			.place(featurePlaceContext, this.feature);
+			.place(featurePlaceContext, this.feature, SavableFeature.getWritableArea(worldGenLevel.getChunk(chunkPos.x, chunkPos.z)));
 	}
 
 	public CompoundTag createTag(@NotNull ChunkPos chunkPos) {

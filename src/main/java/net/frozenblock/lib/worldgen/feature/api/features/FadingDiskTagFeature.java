@@ -29,7 +29,9 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureConfig> {
 
@@ -38,7 +40,7 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
     }
 
 	@Override
-    public boolean place(@NotNull FeaturePlaceContext<FadingDiskTagFeatureConfig> context, SavedFeature savedFeature) {
+    public boolean place(@NotNull FeaturePlaceContext<FadingDiskTagFeatureConfig> context, SavedFeature savedFeature, @Nullable BoundingBox boundingBox) {
 		final AtomicBoolean bl = new AtomicBoolean(false);
         BlockPos blockPos = context.origin();
         WorldGenLevel level = context.level();
@@ -69,11 +71,11 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
 							if (random.nextFloat() < config.placementChance()) {
 								if (fade) {
 									if (random.nextFloat() > 0.5F && state.is(config.outerReplaceableBlocks())) {
-										this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature);
+										this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature, boundingBox);
 										bl.set(true);
 									}
 								} else if (state.is((choseInner = (inner && random.nextFloat() < config.innerChance())) ? config.innerReplaceableBlocks() : config.outerReplaceableBlocks())) {
-									this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature);
+									this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature, boundingBox);
 									bl.set(true);
 								}
 							}
@@ -93,11 +95,11 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
 									if (random.nextFloat() < config.placementChance()) {
 										if (fade) {
 											if (random.nextFloat() > 0.5F && state.is(config.outerReplaceableBlocks())) {
-												this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature);
+												this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature, boundingBox);
 												bl.set(true);
 											}
 										} else if (state.is((choseInner = (inner && random.nextFloat() < config.innerChance())) ? config.innerReplaceableBlocks() : config.outerReplaceableBlocks())) {
-											this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature);
+											this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature, boundingBox);
 											bl.set(true);
 										}
 									}
