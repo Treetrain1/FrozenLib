@@ -81,7 +81,7 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 					SectionPos.of(pos),
 					savedFeature,
 					chunkPos.toLong(),
-					(FeatureAccess)serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
+					(FeatureAccess) serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS, false)
 				);
 			}
 		}
@@ -97,7 +97,7 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 					SectionPos.of(pos),
 					savedFeature,
 					chunkPos.toLong(),
-					(FeatureAccess) serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
+					(FeatureAccess) serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS, false)
 				);
 				return true;
 			}
