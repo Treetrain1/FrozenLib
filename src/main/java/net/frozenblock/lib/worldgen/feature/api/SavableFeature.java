@@ -27,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelWriter;
@@ -42,6 +43,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Optional;
 
 public abstract class SavableFeature<FC extends FeatureConfiguration> extends Feature<FC> {
 	public SavableFeature(Codec<FC> configCodec) {
@@ -64,10 +66,21 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 		);
 	}
 
+	protected abstract FC createFinalizedConfig(FC featureConfiguration, RandomSource random);
+
 	@Override
-	public final boolean place(FeaturePlaceContext<FC> featurePlaceContext) {
-		SavedFeature savedFeature = createSavedFeature(featurePlaceContext);
-		return this.place(featurePlaceContext, savedFeature, null);
+	public final boolean place(@NotNull FeaturePlaceContext<FC> featurePlaceContext) {
+		FC newConfig = this.createFinalizedConfig(featurePlaceContext.config(), featurePlaceContext.random());
+		FeaturePlaceContext<FC> newContext = new FeaturePlaceContext<>(
+			Optional.empty(),
+			featurePlaceContext.level(),
+			featurePlaceContext.chunkGenerator(),
+			featurePlaceContext.random(),
+			featurePlaceContext.origin(),
+			newConfig
+		);
+		SavedFeature savedFeature = createSavedFeature(newContext);
+		return this.place(newContext, savedFeature, null);
 	}
 
 	public abstract boolean place(FeaturePlaceContext<FC> featurePlaceContext, SavedFeature savedFeature, @Nullable BoundingBox boundingBox);

@@ -25,6 +25,7 @@ import net.frozenblock.lib.worldgen.feature.impl.saved.SavedFeature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -38,6 +39,23 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
     public FadingDiskTagFeature(Codec<FadingDiskTagFeatureConfig> codec) {
         super(codec);
     }
+
+	@Override
+	protected FadingDiskTagFeatureConfig createFinalizedConfig(@NotNull FadingDiskTagFeatureConfig featureConfiguration, RandomSource random) {
+		return new FadingDiskTagFeatureConfig(
+			featureConfiguration.useHeightmapInsteadOfCircularPlacement(),
+			featureConfiguration.innerState(),
+			featureConfiguration.outerState(),
+			ConstantInt.of(featureConfiguration.radius().sample(random)),
+			featureConfiguration.placementChance(),
+			featureConfiguration.innerChance(),
+			featureConfiguration.innerPercent(),
+			featureConfiguration.fadeStartDistancePercent(),
+			featureConfiguration.innerReplaceableBlocks(),
+			featureConfiguration.outerReplaceableBlocks(),
+			featureConfiguration.heightmap()
+		);
+	}
 
 	@Override
     public boolean place(@NotNull FeaturePlaceContext<FadingDiskTagFeatureConfig> context, SavedFeature savedFeature, @Nullable BoundingBox boundingBox) {
