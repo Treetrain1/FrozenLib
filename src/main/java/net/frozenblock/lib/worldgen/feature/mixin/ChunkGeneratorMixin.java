@@ -18,24 +18,15 @@
 package net.frozenblock.lib.worldgen.feature.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import java.util.Optional;
-import net.frozenblock.lib.worldgen.feature.impl.saved.ChunkAccessFeatureInterface;
 import net.frozenblock.lib.worldgen.feature.impl.saved.ChunkGeneratorSavableFeatureInterface;
-import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureAccess;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureManager;
-import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureStart;
 import net.minecraft.CrashReport;
-import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;

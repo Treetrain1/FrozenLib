@@ -46,14 +46,14 @@ public class FeatureManager {
 	}
 
 	public List<FeatureStart> getAllStarts(@NotNull SectionPos sectionPos) {
-		Map<SavedFeature, LongSet> references = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)).frozenLib$getAllReferences();
+		Map<SavedFeature, LongSet> references = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_STARTS)).frozenLib$getAllReferences();
 		ImmutableList.Builder<FeatureStart> builder = ImmutableList.builder();
 		references.forEach((feature, longSet) -> this.fillStartsForFeature(feature, longSet, builder::add));
 		return builder.build();
 	}
 
 	public List<FeatureStart> startsForFeature(@NotNull SectionPos sectionPos, SavedFeature feature) {
-		LongSet longSet = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)).frozenLib$getReferencesForFeature(feature);
+		LongSet longSet = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_STARTS)).frozenLib$getReferencesForFeature(feature);
 		ImmutableList.Builder<FeatureStart> builder = ImmutableList.builder();
 		this.fillStartsForFeature(feature, longSet, builder::add);
 		return builder.build();
@@ -63,7 +63,7 @@ public class FeatureManager {
 		for (long l : longSet) {
 			SectionPos sectionPos = SectionPos.of(new ChunkPos(l), this.level.getMinSection());
 			FeatureStart featureStart = this.getStartForFeature(
-				sectionPos, feature, (FeatureAccess) this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.FEATURES)
+				sectionPos, feature, (FeatureAccess) this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_STARTS)
 			);
 			if (featureStart != null) {
 				consumer.accept(featureStart);

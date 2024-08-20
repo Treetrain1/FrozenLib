@@ -42,12 +42,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChunkStatusTasks.class)
 public class ChunkStatusTasksMixin {
 
-	@Inject(
-		method = "generateFeatures",
-		at = @At(
-			"HEAD"
-		)
-	)
+	@Inject(method = "generateFeatures", at = @At("HEAD"))
 	private static void frozenLib$generateFeatureReferences(
 		WorldGenContext worldGenContext,
 		ChunkStep chunkStep,

@@ -17,7 +17,6 @@
 
 package net.frozenblock.lib.worldgen.feature.impl.saved;
 
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.server.level.GenerationChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SavableFeatureChunkStatusTasks {
 
-	public static @NotNull CompletableFuture<ChunkAccess> generateFeatureReferences(
+	public static void generateFeatureReferences(
 		@NotNull WorldGenContext worldGenContext, ChunkStep chunkStep, StaticCache2D<GenerationChunkHolder> staticCache2D, ChunkAccess chunkAccess
 	) {
 		ServerLevel serverLevel = worldGenContext.level();
@@ -39,7 +38,6 @@ public class SavableFeatureChunkStatusTasks {
 			((ServerLevelFeatureManagerInterface)serverLevel).frozenLib$featureManager().forWorldGenRegion(worldGenRegion),
 			chunkAccess
 		);
-		return CompletableFuture.completedFuture(chunkAccess);
 	}
 
 }

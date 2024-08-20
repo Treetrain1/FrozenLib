@@ -80,7 +80,7 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 					SectionPos.of(pos),
 					savedFeature,
 					chunkPos.toLong(),
-					(FeatureAccess)level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.FEATURES)
+					(FeatureAccess)level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
 				);
 			}
 		}
