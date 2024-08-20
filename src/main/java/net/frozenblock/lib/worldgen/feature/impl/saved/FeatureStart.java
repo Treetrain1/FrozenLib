@@ -15,7 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.frozenblock.lib.worldgen.feature.impl;
+package net.frozenblock.lib.worldgen.feature.impl.saved;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 public class FeatureStart {
+	private final ConfiguredFeature<?, ?> feature;
+	private final ChunkPos chunkPos;
+	private final BlockPos origin;
+
+	public FeatureStart(ConfiguredFeature<?, ?> feature, ChunkPos chunkPos, BlockPos origin) {
+		this.feature = feature;
+		this.chunkPos = chunkPos;
+		this.origin = origin;
+	}
 }
