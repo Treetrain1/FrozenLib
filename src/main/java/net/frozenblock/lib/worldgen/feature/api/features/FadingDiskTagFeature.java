@@ -59,8 +59,9 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
 				if (useHeightMapAndNotCircular) {
 					double distance = ((bx - x) * (bx - x) + (bz - z) * (bz - z));
 					if (distance < radius * radius) {
-						mutableDisk.set(x, level.getHeight(heightmap, x, z) - 1, z);
+						mutableDisk.set(x, 64, z);
 						if (!this.saveIfOutOfRange(level, mutableDisk, savedFeature)) {
+						mutableDisk.set(x, level.getHeight(heightmap, x, z) - 1, z);
 							BlockState state = level.getBlockState(mutableDisk);
 							boolean inner = mutableDisk.closerThan(s, radius * config.innerPercent());
 							boolean fade = !inner && !mutableDisk.closerThan(s, radius * config.fadeStartDistancePercent());

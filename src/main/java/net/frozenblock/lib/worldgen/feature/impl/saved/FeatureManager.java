@@ -52,22 +52,11 @@ public class FeatureManager {
 		return builder.build();
 	}
 
-	public List<FeatureStart> startsForFeature(@NotNull SectionPos sectionPos, SavedFeature feature) {
-		LongSet longSet = ((FeatureAccess)this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_STARTS)).frozenLib$getReferencesForFeature(feature);
-		ImmutableList.Builder<FeatureStart> builder = ImmutableList.builder();
-		this.fillStartsForFeature(feature, longSet, builder::add);
-		return builder.build();
-	}
-
 	public void fillStartsForFeature(SavedFeature feature, @NotNull LongSet longSet, Consumer<FeatureStart> consumer) {
 		for (long l : longSet) {
 			SectionPos sectionPos = SectionPos.of(new ChunkPos(l), this.level.getMinSection());
-			FeatureStart featureStart = this.getStartForFeature(
-				sectionPos, feature, (FeatureAccess) this.level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_STARTS)
-			);
-			if (featureStart != null) {
-				consumer.accept(featureStart);
-			}
+			FeatureStart featureStart = new FeatureStart(feature, new ChunkPos(sectionPos.x(), sectionPos.z()));
+			consumer.accept(featureStart);
 		}
 	}
 

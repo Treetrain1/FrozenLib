@@ -40,17 +40,15 @@ public class FeatureStart {
 	private final UUID id;
 	private final SavedFeature feature;
 	private final ChunkPos chunkPos;
-	private int references;
 
-	public FeatureStart(SavedFeature feature, ChunkPos chunkPos, int references) {
-		this(UUID.randomUUID(), feature, chunkPos, references);
+	public FeatureStart(SavedFeature feature, ChunkPos chunkPos) {
+		this(UUID.randomUUID(), feature, chunkPos);
 	}
 
-	public FeatureStart(UUID uuid, SavedFeature feature, ChunkPos chunkPos, int references) {
+	public FeatureStart(UUID uuid, SavedFeature feature, ChunkPos chunkPos) {
 		this.id = uuid;
 		this.feature = feature;
 		this.chunkPos = chunkPos;
-		this.references = references;
 	}
 
 	@Nullable
@@ -69,8 +67,7 @@ public class FeatureStart {
 				return null;
 			} else {
 				ChunkPos chunkPos = new ChunkPos(compoundTag.getInt("ChunkX"), compoundTag.getInt("ChunkZ"));
-				int references = compoundTag.getInt("references");
-				return new FeatureStart(UUID.fromString(uuid), savedFeature, chunkPos, references);
+				return new FeatureStart(UUID.fromString(uuid), savedFeature, chunkPos);
 			}
 		}
 	}
@@ -102,28 +99,11 @@ public class FeatureStart {
 			.ifSuccess(tag -> compoundTag.put("feature", tag));
 		compoundTag.putInt("ChunkX", chunkPos.x);
 		compoundTag.putInt("ChunkZ", chunkPos.z);
-		compoundTag.putInt("references", this.references);
 		return compoundTag;
 	}
 
 	public ChunkPos getChunkPos() {
 		return this.chunkPos;
-	}
-
-	public boolean canBeReferenced() {
-		return this.references < this.getMaxReferences();
-	}
-
-	public void addReference() {
-		this.references++;
-	}
-
-	public int getReferences() {
-		return this.references;
-	}
-
-	protected int getMaxReferences() {
-		return 1;
 	}
 
 	public SavedFeature getFeature() {

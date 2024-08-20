@@ -74,8 +74,7 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 				savedFeature,
 				new FeatureStart(
 					savedFeature,
-					chunkPos,
-					0
+					chunkPos
 				),
 				(FeatureAccess)serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
 			);
