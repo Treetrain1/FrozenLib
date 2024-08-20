@@ -19,12 +19,15 @@ package net.frozenblock.lib.worldgen.feature.api;
 
 import com.mojang.serialization.Codec;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureManager;
+import net.frozenblock.lib.worldgen.feature.impl.saved.ServerLevelInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelWriter;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,8 +46,10 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 		if (this.ensureCanWrite(world, pos)) {
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		} else {
-			StructureManager
-			FeatureManager.addfeaturereference()grhjdbk
+			if (world instanceof ServerLevel level) {
+				FeatureManager manager = ((ServerLevelInterface) level).frozenLib$featureManager();
+				// TODO: do whatever
+			}
 		}
 	}
 
