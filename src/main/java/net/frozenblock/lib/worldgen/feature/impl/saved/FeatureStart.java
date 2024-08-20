@@ -18,7 +18,9 @@
 package net.frozenblock.lib.worldgen.feature.impl.saved;
 
 import com.mojang.logging.LogUtils;
+import java.util.Optional;
 import java.util.UUID;
+import net.frozenblock.lib.worldgen.feature.api.SavableFeature;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.ChunkPos;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -79,12 +82,17 @@ public class FeatureStart {
 	) {
 		WorldgenRandom worldgenRandom = new WorldgenRandom(new XoroshiroRandomSource(RandomSupport.generateUniqueSeed()));
 		worldgenRandom.setSeed(this.feature.seed());
-		this.feature.configuredFeature().place(
+		FeaturePlaceContext<?> featurePlaceContext = new FeaturePlaceContext<net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration>(
+			Optional.empty(),
 			worldGenLevel,
 			chunkGenerator,
 			worldgenRandom,
-			this.feature.origin()
+			this.feature.origin(),
+			this.feature.configuredFeature().config()
 		);
+		((SavableFeature)this.feature.configuredFeature().feature())
+			.place(featurePlaceContext, this.feature);
+		System.out.println("PLACED");
 	}
 
 	public CompoundTag createTag(@NotNull ChunkPos chunkPos) {

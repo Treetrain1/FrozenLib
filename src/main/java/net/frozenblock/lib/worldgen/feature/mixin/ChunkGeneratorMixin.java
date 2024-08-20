@@ -44,10 +44,8 @@ public class ChunkGeneratorMixin implements ChunkGeneratorSavableFeatureInterfac
 	@Inject(
 		method = "applyBiomeDecoration",
 		at = @At(
-			value = "JUMP",
-			opcode = Opcodes.IF_ICMPGE,
-		//	opcode = Opcodes.IF_ICMPLT,
-			ordinal = 0
+			value = "INVOKE",
+			target = "Ljava/lang/Math;max(II)I"
 		)
 	)
 	public void frozenLib$applyBiomeDecoration(

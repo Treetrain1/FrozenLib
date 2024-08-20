@@ -76,7 +76,7 @@ public class FeatureManager {
 		return featureAccess.frozenLib$getStartForFeature(feature);
 	}
 
-	public void setStartForStructure(SectionPos sectionPos, SavedFeature feature, FeatureStart featureStart, @NotNull FeatureAccess featureAccess) {
+	public void setStartForFeature(SectionPos sectionPos, SavedFeature feature, FeatureStart featureStart, @NotNull FeatureAccess featureAccess) {
 		featureAccess.frozenLib$setStartForFeature(feature, featureStart);
 	}
 

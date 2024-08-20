@@ -80,6 +80,7 @@ public class ChunkAccessMixin implements FeatureAccess, ChunkAccessFeatureInterf
 		LongSet references = this.frozenLib$featureRefences.computeIfAbsent(feature, key -> new LongOpenHashSet());
 		if (!references.contains(reference)) {
 			references.add(reference);
+			System.out.println("SAVED");
 		}
 		this.unsaved = true;
 	}
