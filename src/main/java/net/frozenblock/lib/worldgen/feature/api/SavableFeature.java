@@ -73,17 +73,37 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 		if (ensureCanWrite(world, pos)) {
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		} else {
-			if (world instanceof ServerLevel level) {
-				FeatureManager featureManager = ((ServerLevelFeatureManagerInterface) level).frozenLib$featureManager();
+			if (world instanceof WorldGenRegion worldGenRegion) {
+				ServerLevel serverLevel = worldGenRegion.level;
+				FeatureManager featureManager = ((ServerLevelFeatureManagerInterface) serverLevel).frozenLib$featureManager();
 				ChunkPos chunkPos = new ChunkPos(pos);
 				featureManager.addReferenceForFeature(
 					SectionPos.of(pos),
 					savedFeature,
 					chunkPos.toLong(),
-					(FeatureAccess)level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
+					(FeatureAccess)serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
 				);
 			}
 		}
+	}
+
+	protected boolean saveIfOutOfRange(LevelWriter world, BlockPos pos, SavedFeature savedFeature) {
+		if (!ensureCanWrite(world, pos)) {
+			if (world instanceof WorldGenRegion worldGenRegion) {
+				ServerLevel serverLevel = worldGenRegion.level;
+				FeatureManager featureManager = ((ServerLevelFeatureManagerInterface) serverLevel).frozenLib$featureManager();
+				ChunkPos chunkPos = new ChunkPos(pos);
+				featureManager.addReferenceForFeature(
+					SectionPos.of(pos),
+					savedFeature,
+					chunkPos.toLong(),
+					(FeatureAccess) serverLevel.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.STRUCTURE_STARTS)
+				);
+				System.out.println("SAVED");
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean ensureCanWrite(LevelWriter world, BlockPos pos) {

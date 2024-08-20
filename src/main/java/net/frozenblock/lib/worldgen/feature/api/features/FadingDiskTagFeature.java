@@ -60,19 +60,21 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
 					double distance = ((bx - x) * (bx - x) + (bz - z) * (bz - z));
 					if (distance < radius * radius) {
 						mutableDisk.set(x, level.getHeight(heightmap, x, z) - 1, z);
-						BlockState state = level.getBlockState(mutableDisk);
-						boolean inner = mutableDisk.closerThan(s, radius * config.innerPercent());
-						boolean fade = !inner && !mutableDisk.closerThan(s, radius * config.fadeStartDistancePercent());
-						boolean choseInner;
-						if (random.nextFloat() < config.placementChance()) {
-							if (fade) {
-								if (random.nextFloat() > 0.5F && state.is(config.outerReplaceableBlocks())) {
-									this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature);
+						if (!this.saveIfOutOfRange(level, mutableDisk, savedFeature)) {
+							BlockState state = level.getBlockState(mutableDisk);
+							boolean inner = mutableDisk.closerThan(s, radius * config.innerPercent());
+							boolean fade = !inner && !mutableDisk.closerThan(s, radius * config.fadeStartDistancePercent());
+							boolean choseInner;
+							if (random.nextFloat() < config.placementChance()) {
+								if (fade) {
+									if (random.nextFloat() > 0.5F && state.is(config.outerReplaceableBlocks())) {
+										this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature);
+										bl.set(true);
+									}
+								} else if (state.is((choseInner = (inner && random.nextFloat() < config.innerChance())) ? config.innerReplaceableBlocks() : config.outerReplaceableBlocks())) {
+									this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature);
 									bl.set(true);
 								}
-							} else if (state.is((choseInner = (inner && random.nextFloat() < config.innerChance())) ? config.innerReplaceableBlocks() : config.outerReplaceableBlocks())) {
-								this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature);
-								bl.set(true);
 							}
 						}
 					}
@@ -81,20 +83,22 @@ public class FadingDiskTagFeature extends SavableFeature<FadingDiskTagFeatureCon
 						double distance = ((bx - x) * (bx - x) + (by - y) * (by - y) + (bz - z) * (bz - z));
 						if (distance < radius * radius) {
 							mutableDisk.set(x, y, z);
-							BlockState state = level.getBlockState(mutableDisk);
-							if (isBlockExposedToAir(level, mutableDisk)) {
-								boolean inner = mutableDisk.closerThan(s, radius * config.innerPercent());
-								boolean fade = !inner && !mutableDisk.closerThan(s, radius * config.fadeStartDistancePercent());
-								boolean choseInner;
-								if (random.nextFloat() < config.placementChance()) {
-									if (fade) {
-										if (random.nextFloat() > 0.5F && state.is(config.outerReplaceableBlocks())) {
-											this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature);
+							if (!this.saveIfOutOfRange(level, mutableDisk, savedFeature)) {
+								BlockState state = level.getBlockState(mutableDisk);
+								if (isBlockExposedToAir(level, mutableDisk)) {
+									boolean inner = mutableDisk.closerThan(s, radius * config.innerPercent());
+									boolean fade = !inner && !mutableDisk.closerThan(s, radius * config.fadeStartDistancePercent());
+									boolean choseInner;
+									if (random.nextFloat() < config.placementChance()) {
+										if (fade) {
+											if (random.nextFloat() > 0.5F && state.is(config.outerReplaceableBlocks())) {
+												this.safeSetBlock(level, mutableDisk, config.outerState().getState(random, mutableDisk), savedFeature);
+												bl.set(true);
+											}
+										} else if (state.is((choseInner = (inner && random.nextFloat() < config.innerChance())) ? config.innerReplaceableBlocks() : config.outerReplaceableBlocks())) {
+											this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature);
 											bl.set(true);
 										}
-									} else if (state.is((choseInner = (inner && random.nextFloat() < config.innerChance())) ? config.innerReplaceableBlocks() : config.outerReplaceableBlocks())) {
-										this.safeSetBlock(level, mutableDisk, choseInner ? config.innerState().getState(random, mutableDisk) : config.outerState().getState(random, mutableDisk), savedFeature);
-										bl.set(true);
 									}
 								}
 							}

@@ -54,6 +54,7 @@ transitive-accessible    method    net/minecraft/world/level/levelgen/feature/fo
 # Worldgen Region
 transitive-accessible field net/minecraft/server/level/WorldGenRegion generatingStep Lnet/minecraft/world/level/chunk/status/ChunkStep;
 transitive-accessible field net/minecraft/server/level/WorldGenRegion center Lnet/minecraft/world/level/chunk/ChunkAccess;
+transitive-accessible field net/minecraft/server/level/WorldGenRegion level Lnet/minecraft/server/level/ServerLevel;
 
 # Items
 transitive-extendable    method    net/minecraft/world/item/InstrumentItem    getInstrument    (Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;
