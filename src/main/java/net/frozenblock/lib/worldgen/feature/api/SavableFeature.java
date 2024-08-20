@@ -18,27 +18,45 @@
 package net.frozenblock.lib.worldgen.feature.api;
 
 import com.mojang.serialization.Codec;
+import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureAccess;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureManager;
-import net.frozenblock.lib.worldgen.feature.impl.saved.ServerLevelInterface;
+import net.frozenblock.lib.worldgen.feature.impl.saved.SavedFeature;
+import net.frozenblock.lib.worldgen.feature.impl.saved.ServerLevelFeatureManagerInterface;
+import net.frozenblock.lib.worldgen.feature.impl.saved.WorldgenRandomSeedInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelWriter;
-import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 public abstract class SavableFeature<FC extends FeatureConfiguration> extends Feature<FC> {
+	private FC featureConfiguration;
+	private BlockPos origin;
+	private long seed;
 
 	public SavableFeature(Codec<FC> configCodec) {
 		super(configCodec);
+	}
+
+	@Override
+	public boolean place(FC featureConfiguration, WorldGenLevel worldGenLevel, ChunkGenerator chunkGenerator, RandomSource randomSource, BlockPos blockPos) {
+		this.featureConfiguration = featureConfiguration;
+		this.origin = blockPos;
+		if (randomSource instanceof WorldgenRandomSeedInterface worldgenRandom) {
+			this.seed = worldgenRandom.frozenLib$getSeed();
+		}
+		return super.place(featureConfiguration, worldGenLevel, chunkGenerator, randomSource, blockPos);
 	}
 
 	@Override
@@ -47,7 +65,21 @@ public abstract class SavableFeature<FC extends FeatureConfiguration> extends Fe
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		} else {
 			if (world instanceof ServerLevel level) {
-				FeatureManager featureManager = ((ServerLevelInterface) level).frozenLib$featureManager();
+				FeatureManager featureManager = ((ServerLevelFeatureManagerInterface) level).frozenLib$featureManager();
+				ChunkPos chunkPos = new ChunkPos(pos);
+				featureManager.addReferenceForFeature(
+					SectionPos.of(pos),
+					new SavedFeature(
+						this.origin,
+						new ConfiguredFeature<>(
+							this,
+							this.featureConfiguration
+						),
+						this.seed
+					),
+					chunkPos.toLong(),
+					(FeatureAccess)level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.FEATURES)
+				);
 				// TODO: do whatever
 			}
 		}

@@ -9,7 +9,9 @@
   "mixins": [
     "ChunkAccessMixin",
     "ChunkGeneratorMixin",
+    "ChunkStatusTasksMixin",
     "ImposterProtoChunkMixin",
-    "ServerLevelMixin"
+    "ServerLevelMixin",
+    "WorldgenRandomMixin"
   ]
 }

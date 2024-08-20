@@ -18,6 +18,7 @@
 package net.frozenblock.lib.worldgen.feature.mixin;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
+import java.util.Map;
 import net.frozenblock.lib.worldgen.feature.impl.saved.ChunkAccessFeatureInterface;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureAccess;
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureStart;
@@ -29,7 +30,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import java.util.Map;
 
 @Mixin(ImposterProtoChunk.class)
 public class ImposterProtoChunkMixin implements FeatureAccess, ChunkAccessFeatureInterface {

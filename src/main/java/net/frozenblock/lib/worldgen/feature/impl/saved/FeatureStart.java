@@ -18,6 +18,7 @@
 package net.frozenblock.lib.worldgen.feature.impl.saved;
 
 import com.mojang.logging.LogUtils;
+import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.ChunkPos;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import java.util.UUID;
 
 public class FeatureStart {
 	private static final Logger LOGGER = LogUtils.getLogger();

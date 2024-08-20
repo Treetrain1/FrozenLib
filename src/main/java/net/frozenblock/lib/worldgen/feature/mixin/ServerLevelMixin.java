@@ -18,7 +18,7 @@
 package net.frozenblock.lib.worldgen.feature.mixin;
 
 import net.frozenblock.lib.worldgen.feature.impl.saved.FeatureManager;
-import net.frozenblock.lib.worldgen.feature.impl.saved.ServerLevelInterface;
+import net.frozenblock.lib.worldgen.feature.impl.saved.ServerLevelFeatureManagerInterface;
 import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,16 +27,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLevel.class)
-public class ServerLevelMixin implements ServerLevelInterface {
+public class ServerLevelMixin implements ServerLevelFeatureManagerInterface {
 
 	@Unique
 	private FeatureManager featureManager;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void setFeatureManager(CallbackInfo info) {
+	private void frozenLib$setFeatureManager(CallbackInfo info) {
 		this.featureManager = new FeatureManager(ServerLevel.class.cast(this));
 	}
 
+	@Unique
 	@Override
 	public FeatureManager frozenLib$featureManager() {
 		return this.featureManager;

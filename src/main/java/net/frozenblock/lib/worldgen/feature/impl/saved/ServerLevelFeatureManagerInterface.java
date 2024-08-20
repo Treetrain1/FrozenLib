@@ -17,7 +17,7 @@
 
 package net.frozenblock.lib.worldgen.feature.impl.saved;
 
-public interface ServerLevelInterface {
+public interface ServerLevelFeatureManagerInterface {
 
 	FeatureManager frozenLib$featureManager();
 }

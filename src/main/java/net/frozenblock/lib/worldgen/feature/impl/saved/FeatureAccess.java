@@ -18,11 +18,8 @@
 package net.frozenblock.lib.worldgen.feature.impl.saved;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
-import org.jetbrains.annotations.Nullable;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 public interface FeatureAccess {
 	@Nullable
